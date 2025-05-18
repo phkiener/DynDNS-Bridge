@@ -10,7 +10,7 @@ for the Hetzner DNS Console.
 In your Fritz!Box, head to the DynDNS configuration and enter the following:
 
 - Provider: custom
-- Update URL: http://<your-ip>:<your-port>/update/<zone>/<name>?v4=<ipaddr>&v6=<ip6addr>
+- Update URL: `http://<your-ip>:<your-port>/update/<zone>/<name>?v4=<ipaddr>&v6=<ip6addr>`
 - Domain: Not used, just enter whatever
 - Username: Not used, just enter whatever
 - Password: Not used, just enter whatever
