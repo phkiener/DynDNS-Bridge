@@ -1,0 +1,14 @@
+# Build output
+[bB]in/
+[oO]bj/
+[pP]ublish/
+
+# IDE-specific
+.idea/
+.vs/
+.vscode/
+
+# User-specific
+*.user
+*.*~
+.DS_Store
