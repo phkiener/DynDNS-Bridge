@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS SDK
 
-COPY ./ /build
 WORKDIR /build
+COPY ./ ./
 
 RUN dotnet restore
 RUN dotnet build --no-restore --configuration Release
