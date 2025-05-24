@@ -11,6 +11,7 @@ For the host itself, you need to configure the following environment variables:
  - `DOTNET_URLS` - optional list of URLs to listen to, e.g. `192.168.0.200:8080`
 
 Run the webhost either directly or through docker and make sure it's accessible from within your network, but not from the outside.
+Check out the [docker-compose.yaml](./build/docker-compose.yaml) if you want to work with `docker compose`.
 
 In your router, head to the DynDNS configuration and enter the following:
 
