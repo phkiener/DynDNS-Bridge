@@ -9,7 +9,7 @@
     <File Path="build/.dockerignore" />
   </Folder>
   <Folder Name="/Additional Items/Workflows/">
-    <File Path=".github/publish-container.yaml" />
+    <File Path=".github/workflows/publish-container.yaml" />
   </Folder>
-  <Project Path="src/Hetzner.DynDNS-Bridge/Hetzner.DynDNS-Bridge.csproj"  />
+  <Project Path="src/Hetzner.DynDNS-Bridge/Hetzner.DynDNS-Bridge.csproj" />
 </Solution>
