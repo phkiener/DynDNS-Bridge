@@ -8,7 +8,7 @@ Could work for other routers as well, provided they allow you to define a custom
 For the host itself, you need to configure the following environment variables:
  - `DDNSBRIDGE_APIKEY` - your Hetzner DNS Console API key
  - `DDNSBRIDGE_DOMAINS` - a semicolon-separated list of domain names to configure, e.g. `foo.acme.com;bar.acme.com`
- - `DOTNET_URLS` - optional list of URLs to listen to, e.g. `192.168.0.200:8080`
+ - `DOTNET_URLS` - optional list of URLs to listen to, e.g. `http://192.168.0.200:8080`
 
 Run the webhost either directly or through docker and make sure it's accessible from within your network, but not from the outside.
 Check out the [docker-compose.yaml](./build/docker-compose.yaml) if you want to work with `docker compose`.
@@ -33,7 +33,7 @@ environment variables before starting the host:
 |--------------------|--------------------------------------------------|
 | DDNSBRIDGE_APIKEY  | MySuperSecretKey                                 |
 | DDNSBRIDGE_DOMAINS | public.me-at-home.com;travel.blog.me-at-home.com |
-| DOTNET_URLS        | 192.168.0.200:8080                               |
+| DOTNET_URLS        | http://192.168.0.200:8080                        |
 
 Once the host is up and running, head to your router and configure DynDNS. Set the URL to
 `http://192.168.0.200:8080/_refresh?v4=<ipaddr>&v6=<ip6addr>`. Put some placeholders for Domain, Username and Password - we don't need those.
