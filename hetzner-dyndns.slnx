@@ -8,5 +8,8 @@
     <File Path="build/Dockerfile" />
     <File Path="build/.dockerignore" />
   </Folder>
+  <Folder Name="/Additional Items/Workflows/">
+    <File Path=".github/publish-container.yaml" />
+  </Folder>
   <Project Path="src/Hetzner.DynDNS-Bridge/Hetzner.DynDNS-Bridge.csproj"  />
 </Solution>
