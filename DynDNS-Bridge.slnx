@@ -3,6 +3,9 @@
     <File Path=".gitignore" />
     <File Path="LICENSE.txt" />
     <File Path="README.md" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
   </Folder>
   <Folder Name="/Additional Items/Build/">
     <File Path="build/Dockerfile" />
@@ -14,7 +17,8 @@
   </Folder>
   <Folder Name="/Providers/">
     <Project Path="src/DynDNS-Bridge.Providers.Hetzner/DynDNS-Bridge.Providers.Hetzner.csproj" />
-    <Project Path="src\DynDNS-Bridge.Providers.Abstractions\DynDNS-Bridge.Providers.Abstractions.csproj" Type="Classic C#" />
+    <Project Path="src/DynDNS-Bridge.Providers.Abstractions/DynDNS-Bridge.Providers.Abstractions.csproj" />
   </Folder>
   <Project Path="src/DynDNS-Bridge/DynDNS-Bridge.csproj" />
+  <Project Path="src/DynDNS/DynDNS.csproj" />
 </Solution>

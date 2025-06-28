@@ -1,0 +1,19 @@
+@using Microsoft.AspNetCore.Components.Routing
+
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <title>DynDNS Configuration</title>
+    <link rel="stylesheet" href="@Assets["DynDNS.styles.css"]" />
+    <ImportMap />
+</head>
+
+<body>
+<Router AppAssembly="@typeof(Root).Assembly">
+    <Found>
+        <RouteView RouteData="context"/>
+    </Found>
+</Router>
+</body>
+
+</html>
