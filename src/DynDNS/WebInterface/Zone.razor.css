@@ -1,0 +1,87 @@
+article {
+    display: flex;
+    
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 12px;
+    
+    border: 1px solid var(--theme-accent-light);
+    border-radius: 4px;
+
+    box-shadow: 2px 2px 4px black;
+}
+
+header {
+    display: flex;
+
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+article > header {
+    padding: 12px 12px;
+    background-color: var(--theme-accent-light);
+}
+
+header h3 {
+    font-size: 20px;
+    margin: 0;
+    padding: 0;
+}
+
+header .provider::before {
+    content: 'Provider: ';
+    font-size: 16px;
+}
+
+.config {
+    padding: 0 12px;
+}
+
+.config ul {
+    margin: 6px;
+    padding: 0;
+    
+    display: flex;
+
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: baseline;
+    gap: 24px;
+
+    list-style: none;
+}
+
+.config li .key::after {
+    content: ': ';
+}
+
+.domains {
+    padding: 0 12px;
+}
+
+.domains header {
+    font-size: 18px;
+}
+
+.domains ul {
+    margin: 6px;
+    padding: 0;
+
+    list-style: none;
+}
+
+.domains li {
+    margin: 0 6px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.domains li .zone::before {
+    content: '.';
+}

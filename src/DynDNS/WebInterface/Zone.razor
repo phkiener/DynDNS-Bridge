@@ -1,0 +1,31 @@
+<article>
+    <header>
+        <h3>@Name</h3>
+        <span class="provider">@Provider</span>
+    </header>
+    
+    <section class="config">
+        <ul>
+            @foreach (var (key, value) in Parameters)
+            {
+                <li class="parameter">
+                    <span class="key">@key</span>
+                    <span class="value">@value</span>
+                </li>
+            }
+        </ul>
+    </section>
+    
+    <section class="domains">
+        <header>Subdomains</header>
+        <ul>
+            @foreach (var domain in Subdomains)
+            {
+                <li class="subdomain">
+                    <span class="name">@domain</span>
+                    <span class="zone">@Name</span>
+                </li>
+            }
+        </ul>
+    </section>
+</article>

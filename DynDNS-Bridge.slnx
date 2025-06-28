@@ -16,8 +16,8 @@
     <File Path=".github/workflows/publish-container.yaml" />
   </Folder>
   <Folder Name="/Providers/">
-    <Project Path="src/DynDNS-Bridge.Providers.Hetzner/DynDNS-Bridge.Providers.Hetzner.csproj" />
     <Project Path="src/DynDNS-Bridge.Providers.Abstractions/DynDNS-Bridge.Providers.Abstractions.csproj" />
+    <Project Path="src/DynDNS-Bridge.Providers.Hetzner/DynDNS-Bridge.Providers.Hetzner.csproj" />
   </Folder>
   <Project Path="src/DynDNS-Bridge/DynDNS-Bridge.csproj" />
   <Project Path="src/DynDNS/DynDNS.csproj" />

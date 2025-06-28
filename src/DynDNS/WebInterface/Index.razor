@@ -1,3 +1,24 @@
 @page "/"
+@using DynDNS.WebInterface.Components
 
-<h1>Look ma, no hands</h1>
+<header>
+    <h2>Configured zones</h2>
+    <DButton>+ Add new zone</DButton>
+</header>
+
+<section>
+    <Zone Name="phkiener.ch" 
+          Provider="Hetzner" 
+          Parameters="@(new Dictionary<string, string> { ["Enabled"] = "true", ["API Key"] = "..."})"
+          Subdomains="@(["dns", "vpn", "jellyfin"])"/>
+
+    <Zone Name="foobar.ch" 
+          Provider="Hetzner" 
+          Parameters="@(new Dictionary<string, string> { ["Enabled"] = "false", ["API Key"] = "..."})"
+          Subdomains="@(["schnitzel", "www"])"/>
+
+    <Zone Name="extra.ch" 
+          Provider="Hetzner" 
+          Parameters="@(new Dictionary<string, string> { ["Enabled"] = "false", ["API Key"] = "..."})"
+          Subdomains="@(["root", "blog"])"/>
+</section>

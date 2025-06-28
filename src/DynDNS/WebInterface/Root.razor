@@ -9,11 +9,16 @@
 </head>
 
 <body>
-<Router AppAssembly="@typeof(Root).Assembly">
-    <Found>
-        <RouteView RouteData="context"/>
-    </Found>
-</Router>
+<header>
+    <h1>DynDNS Configuration</h1>
+</header>
+<main>
+    <Router AppAssembly="@typeof(Root).Assembly">
+        <Found>
+            <RouteView RouteData="context"/>
+        </Found>
+    </Router>
+</main>
 </body>
 
 </html>
