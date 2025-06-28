@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Components;
 
-namespace DynDNS.WebInterface.Components;
+namespace DynDNS.WebInterface.Primitives;
 
-public sealed partial class DButton : ComponentBase
+public sealed partial class DynButton : ComponentBase
 {
     [Parameter, EditorRequired]
     public required RenderFragment ChildContent { get; set; }

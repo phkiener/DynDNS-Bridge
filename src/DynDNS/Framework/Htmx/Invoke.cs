@@ -1,4 +1,4 @@
-namespace DynDNS.Framework;
+namespace DynDNS.Framework.Htmx;
 
 public static class Invoke
 {

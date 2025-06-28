@@ -1,5 +1,3 @@
-@using DynDNS.WebInterface.Components
-
 <ul class="current-connection">
     @if (currentAddress.IPv4 is not null)
     {
@@ -16,6 +14,6 @@
     }
     
     <li>
-        <DButton hx-post="/interact/refresh-address" hx-target="closest ul" hx-swap="outerHTML">&#8635; Reload</DButton>
+        <DynButton hx-post="/interact/refresh-address" hx-target="closest ul" hx-swap="outerHTML">&#8635; Reload</DynButton>
     </li>
 </ul>

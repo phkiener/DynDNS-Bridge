@@ -1,4 +1,4 @@
-namespace DynDNS.Network;
+namespace DynDNS.Framework.Network;
 
 public sealed class CurrentAddressProvider(ILogger<CurrentAddressProvider> logger, IHttpClientFactory httpClientFactory)
     : BackgroundService, ICurrentAddressProvider
@@ -13,14 +13,20 @@ public sealed class CurrentAddressProvider(ILogger<CurrentAddressProvider> logge
         await RefreshCurrentAddressAsync(cancellationToken);
     }
 
+    public override async Task StartAsync(CancellationToken cancellationToken)
+    {
+        await RefreshCurrentAddressAsync(cancellationToken);
+        await base.StartAsync(cancellationToken);
+    }
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         timer = new PeriodicTimer(TimeSpan.FromMinutes(5));
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            await RefreshCurrentAddressAsync(stoppingToken);
             await timer.WaitForNextTickAsync(stoppingToken);
+            await RefreshCurrentAddressAsync(stoppingToken);
         }
     }
 
@@ -31,6 +37,8 @@ public sealed class CurrentAddressProvider(ILogger<CurrentAddressProvider> logge
             var client = httpClientFactory.CreateClient(nameof(CurrentAddressProvider));
             IPv4 = await DetermineIPv4Async(client, cancellationToken);
             IPv6 = await DetermineIPv6Async(client, cancellationToken);
+            
+            logger.LogInformation("Current addresses: IPv4 - {IPv4}, IPv6 - {IPv6}",  IPv4 ?? "none", IPv6 ?? "none");
         }
         catch (Exception e) when (e is not (TaskCanceledException or OperationCanceledException))
         {
@@ -41,23 +49,13 @@ public sealed class CurrentAddressProvider(ILogger<CurrentAddressProvider> logge
     private static async Task<string?> DetermineIPv4Async(HttpClient client, CancellationToken cancellationToken)
     {
         var response = await client.GetAsync("https://4.icanhazip.com/", cancellationToken);
-        if (response.IsSuccessStatusCode)
-        {
-            return (await response.Content.ReadAsStringAsync(cancellationToken)).Trim();
-        }
-
-        return null;
+        return response.IsSuccessStatusCode ? (await response.Content.ReadAsStringAsync(cancellationToken)).Trim() : null;
     }
 
     private static async Task<string?> DetermineIPv6Async(HttpClient client, CancellationToken cancellationToken)
     {
         var response = await client.GetAsync("https://6.icanhazip.com/", cancellationToken);
-        if (response.IsSuccessStatusCode)
-        {
-            return (await response.Content.ReadAsStringAsync(cancellationToken)).Trim();
-        }
-
-        return null;
+        return response.IsSuccessStatusCode ? (await response.Content.ReadAsStringAsync(cancellationToken)).Trim() : null;
     }
 
     public override void Dispose()

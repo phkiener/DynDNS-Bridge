@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http.HttpResults;
 
-namespace DynDNS.Framework;
+namespace DynDNS.Framework.Htmx;
 
 public static class HtmxExtensions
 {
@@ -11,7 +11,7 @@ public static class HtmxExtensions
         [StringSyntax("Route")] string path,
         Func<HttpContext, Task> action) where T : IComponent
     {
-        return endpoint.MapPost(path, InvokeAndRender<T>(action)).AddEndpointFilter<HtmxOnlyFilter>();
+        return endpoint.MapPost(path, InvokeAndRender<T>(action)).AddEndpointFilter<RequireHtmx>();
     }
 
     private static Delegate InvokeAndRender<T>(Func<HttpContext, Task> action) where T : IComponent
@@ -22,4 +22,18 @@ public static class HtmxExtensions
             return new RazorComponentResult<T>();
         };
     }
+    
+    private sealed class RequireHtmx : IEndpointFilter
+    {
+        public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
+        {
+            if (context.HttpContext.Request.Headers.TryGetValue("hx-request", out var value) && value == "true")
+            {
+                return await next(context);
+            }
+
+            return Results.NotFound();
+        }
+    }
+
 }

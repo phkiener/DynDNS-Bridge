@@ -1,4 +1,4 @@
-namespace DynDNS.Network;
+namespace DynDNS.Framework;
 
 public interface ICurrentAddressProvider
 {
