@@ -14,6 +14,40 @@ public static class Endpoints
 
         return new RazorComponentResult<CurrentConnection>();
     }
+
+    public static IResult AddZoneTemplate()
+    {
+        var parameters = new Dictionary<string, object?>
+        {
+            [nameof(Zone.Name)] = "",
+            [nameof(Zone.Provider)] = "",
+            [nameof(Zone.Parameters)] = new Dictionary<string, string>(),
+            [nameof(Zone.Subdomains)] = Array.Empty<string>()
+        };
+        
+        return new RazorComponentResult<ZoneTemplate>(parameters);
+    }
+
+    public static IResult AddZone(
+        [FromForm] bool? save,
+        [FromForm] string? name,
+        [FromForm] string? provider)
+    {
+        var parameters = new Dictionary<string, object?>
+        {
+            [nameof(Zone.Name)] = name ?? "",
+            [nameof(Zone.Provider)] = provider ?? "Hetzner",
+            [nameof(Zone.Parameters)] = new Dictionary<string, string>(),
+            [nameof(Zone.Subdomains)] = Array.Empty<string>()
+        };
+        
+        if (save is true)
+        {
+            return new RazorComponentResult<Zone>(parameters);
+        }
+
+        return new RazorComponentResult<ZoneTemplate>(parameters);
+    }
     
     public static async Task<IResult> DeleteZone(
         [FromRoute(Name = "name")] string zone,

@@ -2,7 +2,10 @@
     <header>
         <h3>@Name</h3>
         <span class="provider">@Provider</span>
-        <DynButton hx-delete=@($"/interact/delete-zone/{Name}") hx-target="closest article" hx-swap="outerHTML">Delete zone</DynButton>
+        
+        <DynButton hx-delete=@($"/interact/delete-zone/{Name}") hx-target="closest article" hx-swap="outerHTML">
+            Delete zone
+        </DynButton>
     </header>
     
     <section class="config">

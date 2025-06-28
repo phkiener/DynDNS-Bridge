@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace DynDNS.WebInterface.Components;
 
-public sealed partial class Zone : ComponentBase
+public partial class Zone : ComponentBase
 {
     [Parameter, EditorRequired]
     public required string Name { get; set; }

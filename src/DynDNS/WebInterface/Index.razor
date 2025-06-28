@@ -2,10 +2,13 @@
 
 <header>
     <h2>Configured zones</h2>
-    <DynButton>+ Add new zone</DynButton>
+
+    <DynButton hx-get="/interact/add-zone" hx-target="#zones" hx-swap="afterbegin">
+        + Add new zone
+    </DynButton>
 </header>
 
-<section>
+<section id="zones">
     @foreach (var zone in zoneRepository.GetZones())
     {
         <Zone Name="@zone.Zone" Provider="@zone.Provider" Parameters="@zone.Parameters" Subdomains="@zone.Subdomains" />

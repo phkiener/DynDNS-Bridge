@@ -32,6 +32,8 @@ public static class ServiceProviderConfig
 
         app.MapRazorComponents<Root>();
         app.MapPost("interact/refresh-address", Endpoints.RefreshAddress).AddEndpointFilter<RequireHtmx>();
+        app.MapGet("interact/add-zone", Endpoints.AddZoneTemplate).AddEndpointFilter<RequireHtmx>();
+        app.MapPost("interact/add-zone", Endpoints.AddZone).AddEndpointFilter<RequireHtmx>();
         app.MapDelete("interact/delete-zone/{name}", Endpoints.DeleteZone).AddEndpointFilter<RequireHtmx>();
     }
 }
