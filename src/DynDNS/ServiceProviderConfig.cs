@@ -2,7 +2,7 @@ using DynDNS.Framework;
 using DynDNS.Framework.Htmx;
 using DynDNS.Framework.Network;
 using DynDNS.WebInterface;
-using DynDNS.WebInterface.Components;
+using DynDNS.Zones;
 
 namespace DynDNS;
 
@@ -21,6 +21,8 @@ public static class ServiceProviderConfig
         builder.Services.AddSingleton<CurrentAddressProvider>();
         builder.Services.AddSingleton<ICurrentAddressProvider>(static sp => sp.GetRequiredService<CurrentAddressProvider>());
         builder.Services.AddHostedService(static sp => sp.GetRequiredService<CurrentAddressProvider>());
+
+        builder.Services.AddSingleton<IZoneRepository, ZoneRepository>();
     }
 
     public static void ConfigureEndpoints(this WebApplication app)
@@ -29,6 +31,7 @@ public static class ServiceProviderConfig
         app.UseAntiforgery();
 
         app.MapRazorComponents<Root>();
-        app.MapHtmxPost<CurrentConnection>("interact/refresh-address", Invoke.On<ICurrentAddressProvider>(static (r, ct) => r.RefreshAsync(ct)));
+        app.MapPost("interact/refresh-address", Endpoints.RefreshAddress).AddEndpointFilter<RequireHtmx>();
+        app.MapDelete("interact/delete-zone/{name}", Endpoints.DeleteZone).AddEndpointFilter<RequireHtmx>();
     }
 }

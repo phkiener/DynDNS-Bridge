@@ -6,18 +6,8 @@
 </header>
 
 <section>
-    <Zone Name="phkiener.ch" 
-          Provider="Hetzner" 
-          Parameters="@(new Dictionary<string, string> { ["Enabled"] = "true", ["API Key"] = "..."})"
-          Subdomains="@(["dns", "vpn", "jellyfin"])"/>
-
-    <Zone Name="foobar.ch" 
-          Provider="Hetzner" 
-          Parameters="@(new Dictionary<string, string> { ["Enabled"] = "false", ["API Key"] = "..."})"
-          Subdomains="@(["schnitzel", "www"])"/>
-
-    <Zone Name="extra.ch" 
-          Provider="Hetzner" 
-          Parameters="@(new Dictionary<string, string> { ["Enabled"] = "false", ["API Key"] = "..."})"
-          Subdomains="@(["root", "blog"])"/>
+    @foreach (var zone in zoneRepository.GetZones())
+    {
+        <Zone Name="@zone.Zone" Provider="@zone.Provider" Parameters="@zone.Parameters" Subdomains="@zone.Subdomains" />
+    }
 </section>

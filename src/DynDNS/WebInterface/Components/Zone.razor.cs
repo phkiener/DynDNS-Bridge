@@ -11,8 +11,8 @@ public sealed partial class Zone : ComponentBase
     public required string Provider { get; set; }
 
     [Parameter, EditorRequired]
-    public required Dictionary<string, string> Parameters { get; set; }
+    public required IReadOnlyDictionary<string, string> Parameters { get; set; }
 
     [Parameter, EditorRequired]
-    public required List<string> Subdomains { get; set; }
+    public required IReadOnlyList<string> Subdomains { get; set; }
 }
