@@ -4,30 +4,21 @@
 <html lang="en-US">
 <head>
     <title>DynDNS Configuration</title>
-    <link rel="stylesheet" href="@Assets["DynDNS.styles.css"]" />
     <ImportMap />
+    
+    <link rel="stylesheet" href="@Assets["DynDNS.styles.css"]" />
+    <script src="@Assets["htmx.min.js"]"></script>
 </head>
 
 <body>
 <header>
     <h1>DynDNS Configuration</h1>
 
-    <span>
-        @if (currentAddress.IPv4 is not null)
-        {
-            @:IPv4: @currentAddress.IPv4
-        }
-    </span>
-    
-    <span>
-        @if (currentAddress.IPv6 is not null)
-        {
-            @:IPv6: @currentAddress.IPv6
-        }
-    </span>
+    <CurrentConnection />
 </header>
 
 <main>
+
     <Router AppAssembly="@typeof(Root).Assembly">
         <Found>
             <RouteView RouteData="context"/>

@@ -8,9 +8,9 @@ public sealed class CurrentAddressProvider(ILogger<CurrentAddressProvider> logge
     public string? IPv4 { get; private set; }
     public string? IPv6 { get; private set; }
     
-    public Task RefreshAsync(CancellationToken cancellationToken)
+    public async Task RefreshAsync(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        await RefreshCurrentAddressAsync(cancellationToken);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

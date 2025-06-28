@@ -1,3 +1,4 @@
+using DynDNS.Framework;
 using DynDNS.Network;
 using DynDNS.WebInterface;
 
@@ -14,4 +15,7 @@ var app = builder.Build();
 app.MapStaticAssets();
 app.UseAntiforgery();
 app.MapRazorComponents<Root>();
+
+app.MapHtmxPost<CurrentConnection>("interact/refresh-address", Invoke.On<ICurrentAddressProvider>(static (r, ct) => r.RefreshAsync(ct)));
+
 app.Run();
