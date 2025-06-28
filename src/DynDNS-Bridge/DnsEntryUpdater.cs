@@ -1,4 +1,4 @@
-namespace Hetzner.DynDNSBridge;
+namespace DynDNS;
 
 /// <summary>
 /// An updater for DNS records to make sure they are in the required state.

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Hetzner.DynDNSBridge;
+namespace DynDNS;
 
 /// <summary>
 /// Full content of a DNS zone.

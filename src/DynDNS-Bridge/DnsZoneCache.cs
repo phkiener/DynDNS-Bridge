@@ -1,4 +1,4 @@
-namespace Hetzner.DynDNSBridge;
+namespace DynDNS;
 
 /// <summary>
 /// A cache for DNS zone information.

@@ -1,4 +1,4 @@
-namespace Hetzner.DynDNSBridge;
+namespace DynDNS;
 
 /// <summary>
 /// An URL to configure for DynDNS.

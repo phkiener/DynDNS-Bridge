@@ -1,4 +1,4 @@
-﻿using Hetzner.DynDNSBridge;
+﻿using DynDNS;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateSlimBuilder(args);

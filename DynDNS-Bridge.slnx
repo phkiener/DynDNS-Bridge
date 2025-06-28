@@ -12,5 +12,5 @@
   <Folder Name="/Additional Items/Workflows/">
     <File Path=".github/workflows/publish-container.yaml" />
   </Folder>
-  <Project Path="src/Hetzner.DynDNS-Bridge/Hetzner.DynDNS-Bridge.csproj" />
+  <Project Path="src\DynDNS-Bridge\DynDNS-Bridge.csproj" />
 </Solution>
