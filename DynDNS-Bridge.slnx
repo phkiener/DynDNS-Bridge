@@ -12,5 +12,9 @@
   <Folder Name="/Additional Items/Workflows/">
     <File Path=".github/workflows/publish-container.yaml" />
   </Folder>
-  <Project Path="src\DynDNS-Bridge\DynDNS-Bridge.csproj" />
+  <Folder Name="/Providers/">
+    <Project Path="src/DynDNS-Bridge.Providers.Hetzner/DynDNS-Bridge.Providers.Hetzner.csproj" />
+    <Project Path="src\DynDNS-Bridge.Providers.Abstractions\DynDNS-Bridge.Providers.Abstractions.csproj" Type="Classic C#" />
+  </Folder>
+  <Project Path="src/DynDNS-Bridge/DynDNS-Bridge.csproj" />
 </Solution>
