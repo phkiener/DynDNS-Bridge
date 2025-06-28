@@ -25,7 +25,8 @@ header {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    align-items: center;
+    align-items: baseline;
+    gap: 12px;
     
     padding: 12px;
 

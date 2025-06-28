@@ -11,7 +11,22 @@
 <body>
 <header>
     <h1>DynDNS Configuration</h1>
+
+    <span>
+        @if (currentAddress.IPv4 is not null)
+        {
+            @:IPv4: @currentAddress.IPv4
+        }
+    </span>
+    
+    <span>
+        @if (currentAddress.IPv6 is not null)
+        {
+            @:IPv6: @currentAddress.IPv6
+        }
+    </span>
 </header>
+
 <main>
     <Router AppAssembly="@typeof(Root).Assembly">
         <Found>
