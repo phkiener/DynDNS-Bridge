@@ -15,9 +15,6 @@
   <Folder Name="/Additional Items/Workflows/">
     <File Path=".github/workflows/publish-container.yaml" />
   </Folder>
-  <Folder Name="/MSBuild/">
-    <Project Path="tools/CopyCssScope/CopyCssScope.csproj" />
-  </Folder>
   <Folder Name="/Providers/">
     <Project Path="src/DynDNS-Bridge.Providers.Abstractions/DynDNS-Bridge.Providers.Abstractions.csproj" />
     <Project Path="src/DynDNS-Bridge.Providers.Hetzner/DynDNS-Bridge.Providers.Hetzner.csproj" />
