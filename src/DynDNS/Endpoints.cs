@@ -35,8 +35,8 @@ public static class Endpoints
     {
         var parameters = new Dictionary<string, object?>
         {
-            [nameof(Zone.Name)] = name ?? "",
-            [nameof(Zone.Provider)] = provider ?? "Hetzner",
+            [nameof(Zone.Name)] = name,
+            [nameof(Zone.Provider)] = provider,
             [nameof(Zone.Parameters)] = new Dictionary<string, string>(),
             [nameof(Zone.Subdomains)] = Array.Empty<string>()
         };

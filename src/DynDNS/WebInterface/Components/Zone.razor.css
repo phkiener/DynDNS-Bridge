@@ -18,7 +18,7 @@ header {
     display: flex;
 
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     gap: 12px;
 }
@@ -26,6 +26,10 @@ header {
 article > header {
     padding: 12px 12px;
     background-color: var(--theme-accent-light);
+}
+
+article > header ::deep button:last-child {
+    margin-left: auto;
 }
 
 header h3 {

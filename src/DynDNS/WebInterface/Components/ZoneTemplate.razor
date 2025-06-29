@@ -1,13 +1,12 @@
 @inherits Zone
 
-<form hx-post="/interact/add-zone" hx-target="closest form" hx-swap="outerHTML">
-    <AntiforgeryToken />
-
+<EditForm EditContext="@editContext" hx-post="/interact/add-zone?validate=true" hx-target="closest form" hx-swap="outerHTML">
     <article hx-sync="closest form:queue">
         <header>
             <h3>
-                <input type="text" name="name" required value="@Name" onchange="closest('form').requestSubmit()">
+                <InputText @bind-Value="Name" required hx-validate />
             </h3>
+            <ValidationMessage For="@(() => Name)" />
             <span class="provider">
                 <select name="provider" required>
                     <option>Select...</option>
@@ -16,33 +15,36 @@
             </span>
         </header>
 
-        <section class="config">
-            <ul>
-                @foreach (var (key, value) in Parameters)
-                {
-                    <li class="parameter">
-                        <span class="key">@key</span>
-                        <span class="value">@value</span>
-                    </li>
-                }
-            </ul>
-        </section>
+        @if (!string.IsNullOrWhiteSpace(Name) && !string.IsNullOrWhiteSpace(Provider))
+        {
+            <section class="config">
+                <ul>
+                    @foreach (var (key, value) in Parameters)
+                    {
+                        <li class="parameter">
+                            <span class="key">@key</span>
+                            <span class="value">@value</span>
+                        </li>
+                    }
+                </ul>
+            </section>
 
-        <section class="domains">
-            <header>Subdomains</header>
-            <ul>
-                @foreach (var domain in Subdomains)
-                {
-                    <li class="subdomain">
-                        <span class="name">@domain</span>
-                        <span class="zone">@Name</span>
-                    </li>
-                }
-            </ul>
-        </section>
+            <section class="domains">
+                <header>Subdomains</header>
+                <ul>
+                    @foreach (var domain in Subdomains)
+                    {
+                        <li class="subdomain">
+                            <span class="name">@domain</span>
+                            <span class="zone">@Name</span>
+                        </li>
+                    }
+                </ul>
+            </section>
+        }
 
         <section class="controls">
-            <DynButton Submit name="save" value="true">
+            <DynButton Submit name="save" value="true" Disabled="@(!editContext.Validate())">
                 Save zone
             </DynButton>
 
@@ -51,4 +53,8 @@
             </DynButton>
         </section>
     </article>
-</form>
+    
+    <script>
+        document.currentScript.parentElement.querySelectorAll(":is(input, select, textarea)").forEach(e => e.addEventListener("change", () => e.closest('form').requestSubmit()));
+    </script>
+</EditForm>

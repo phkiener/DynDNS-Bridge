@@ -28,3 +28,10 @@ button:disabled {
 
     cursor: not-allowed;
 }
+
+button:active:not(:disabled) {
+    filter: brightness(175%);
+    backdrop-filter: brightness(175%);
+
+    cursor: pointer;
+}
