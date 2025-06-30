@@ -30,7 +30,7 @@ public static class ServiceProviderConfig
         app.MapStaticAssets();
         app.UseAntiforgery();
 
-        app.MapRazorComponents<Root>();
+        app.MapRazorComponents<_Root>();
         app.MapControllers();
     }
 }
