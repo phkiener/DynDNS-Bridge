@@ -1,6 +1,6 @@
 @inherits Zone
 
-<EditForm EditContext="@editContext" hx-post="/interact/add-zone?validate=true" hx-target="closest form" hx-swap="outerHTML">
+<EditForm EditContext="@editContext" hx-post="/interact/zones" hx-target="closest form" hx-swap="outerHTML">
     <article hx-sync="closest form:queue">
         <header>
             <h3>
@@ -48,7 +48,7 @@
                 Save zone
             </DynButton>
 
-            <DynButton hx-delete=@("/interact/delete-zone/_") hx-target="closest form" hx-swap="outerHTML">
+            <DynButton hx-delete=@("/interact/zones/_") hx-target="closest form" hx-swap="outerHTML">
                 Cancel
             </DynButton>
         </section>
