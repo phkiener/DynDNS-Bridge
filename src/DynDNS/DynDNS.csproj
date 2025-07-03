@@ -6,8 +6,8 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Swallow.Build.StyleIsolation"  />
-    <AppendStyles Include="WebInterface/Components/ZoneTemplate.razor" From="WebInterface/Components/Zone.razor" />
+    <PackageReference Include="Swallow.Blazor.AdvancedStyleIsolation" />
+    <PackageReference Include="Swallow.Blazor.StaticAssetPaths" />
   </ItemGroup>
   
   <ItemGroup>

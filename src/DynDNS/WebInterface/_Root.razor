@@ -1,22 +1,30 @@
 <!DOCTYPE html>
-<html lang="en-US">
+<html lang="en" data-bs-theme="dark">
 <head>
-    <title>DynDNS Configuration</title>
-    <ImportMap />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    <link rel="stylesheet" href="@Assets["DynDNS.styles.css"]" />
-    <script src="@Assets["htmx.min.js"]"></script>
+    <title>DynDNS Configuration</title>
+    
+    <ImportMap />
+    <link rel="stylesheet" href="@Assets[AssetPaths.Wwwroot.BootstrapMinCss]" />
+    <link rel="stylesheet" href="@Assets[AssetPaths.Wwwroot.BootstrapIconsMinCss]" />
+    <link rel="stylesheet" href="@Assets[AssetPaths.Wwwroot.BootstrapIconsExtraCss]" />
+    <script src="@Assets[AssetPaths.Wwwroot.BootstrapMinJs]"></script>
+    <script src="@Assets[AssetPaths.Wwwroot.HtmxMinJs]"></script>
 </head>
 
 <body>
 <header>
-    <h1>DynDNS Configuration</h1>
-
-    <CurrentConnection />
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+            <span class="navbar-brand">DynDNS Configuration</span>
+            <CurrentConnection />
+        </div>
+    </nav>
 </header>
 
-<main>
-
+<main class="container-lg">
     <Router AppAssembly="@typeof(_Root).Assembly">
         <Found>
             <RouteView RouteData="context"/>

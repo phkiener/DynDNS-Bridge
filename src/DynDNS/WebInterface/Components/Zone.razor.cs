@@ -9,9 +9,15 @@ public partial class Zone : ComponentBase
     
     [Parameter, EditorRequired]
     public required string Provider { get; set; }
-
+    
     [Parameter, EditorRequired]
-    public required IReadOnlyDictionary<string, string> Parameters { get; set; }
+    public required bool BindIPv4 { get; set; }
+    
+    [Parameter, EditorRequired]
+    public required bool BindIPv6 { get; set; }
+    
+    [Parameter, EditorRequired]
+    public required string ApiKey { get; set; }
 
     [Parameter, EditorRequired]
     public required IReadOnlyList<string> Subdomains { get; set; }

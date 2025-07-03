@@ -1,16 +1,17 @@
 @page "/"
 
-<header>
-    <h2>Configured zones</h2>
-
-    <DynButton hx-get="/interact/zones/_template" hx-target="#zones" hx-swap="afterbegin">
-        + Add new zone
-    </DynButton>
-</header>
-
-<section id="zones">
+<section class="my-4">
     @foreach (var zone in zoneRepository.GetZones())
     {
-        <Zone Name="@zone.Zone" Provider="@zone.Provider" Parameters="@zone.Parameters" Subdomains="@zone.Subdomains" />
+        <Zone Name="@zone.Zone"
+              Provider="@zone.Provider"
+              BindIPv4="@zone.BindIPv4"
+              BindIPv6="@zone.BindIPv6"
+              ApiKey="@zone.ApiKey"
+              Subdomains="@zone.Subdomains" />
     }
+    
+    <button type="button" class="btn btn-primary" hx-get="/interact/zones/_template" hx-target="#zones" hx-swap="afterbegin">
+        + Add new zone
+    </button>
 </section>

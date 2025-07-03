@@ -4,14 +4,25 @@ public sealed class ZoneRepository : IZoneRepository
 {
     private readonly List<ZoneConfiguration> zones =
     [
-        new("phkiener.ch", "Hetzner", new Dictionary<string, string> { ["API Key"] = "fQwa..." }, ["vpn", "dns", "jellyfin"]),
-        new("example.ch", "Hetzner", new Dictionary<string, string> { ["API Key"] = "av34..." }, ["blog"]),
-        new("another-one.ch", "Hetzner", new Dictionary<string, string> { ["API Key"] = "mmh4..." }, ["www", "public", "private"])
+        new("phkiener.ch", "Hetzner", true, true, "", ["vpn", "dns", "jellyfin"]),
+        new("example.ch", "Hetzner", true, true, "", ["blog"]),
+        new("another-one.ch", "Hetzner", true, true, "", ["www", "public", "private"])
     ];
 
     public IEnumerable<ZoneConfiguration> GetZones()
     {
         return zones.AsEnumerable();
+    }
+
+    public Task UpdateZoneAsync(string zone, Func<ZoneConfiguration, ZoneConfiguration> update, CancellationToken cancellationToken)
+    {
+        var index = zones.FindIndex(f => f.Zone == zone);
+        if (index is not -1)
+        {
+            zones[index] = update(zones[index]);
+        }
+        
+        return Task.CompletedTask;
     }
 
     public Task DeleteZoneAsync(string zone, CancellationToken cancellationToken)

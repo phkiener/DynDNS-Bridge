@@ -16,7 +16,9 @@ public sealed class ZoneController(IZoneRepository zoneRepository) : Controller
         {
             [nameof(Zone.Name)] = "",
             [nameof(Zone.Provider)] = "",
-            [nameof(Zone.Parameters)] = new Dictionary<string, string>(),
+            [nameof(Zone.BindIPv4)] = false,
+            [nameof(Zone.BindIPv6)] = false,
+            [nameof(Zone.ApiKey)] = "",
             [nameof(Zone.Subdomains)] = Array.Empty<string>()
         };
 
@@ -30,7 +32,9 @@ public sealed class ZoneController(IZoneRepository zoneRepository) : Controller
         {
             [nameof(Zone.Name)] = name ?? "",
             [nameof(Zone.Provider)] = provider ?? "",
-            [nameof(Zone.Parameters)] = new Dictionary<string, string>(),
+            [nameof(Zone.BindIPv4)] = false,
+            [nameof(Zone.BindIPv6)] = false,
+            [nameof(Zone.ApiKey)] = "",
             [nameof(Zone.Subdomains)] = Array.Empty<string>()
         };
 
@@ -44,7 +48,9 @@ public sealed class ZoneController(IZoneRepository zoneRepository) : Controller
         {
             [nameof(Zone.Name)] = "",
             [nameof(Zone.Provider)] = "",
-            [nameof(Zone.Parameters)] = new Dictionary<string, string>(),
+            [nameof(Zone.BindIPv4)] = false,
+            [nameof(Zone.BindIPv6)] = false,
+            [nameof(Zone.ApiKey)] = "",
             [nameof(Zone.Subdomains)] = Array.Empty<string>()
         };
 
@@ -55,6 +61,14 @@ public sealed class ZoneController(IZoneRepository zoneRepository) : Controller
     public async Task<IActionResult> DeleteZoneAsync(string zone, CancellationToken cancellationToken)
     {
         await zoneRepository.DeleteZoneAsync(zone, cancellationToken);
+
+        return Empty;
+    }
+    
+    [HttpDelete("/interact/zones/{zone}/subdomains/{subdomain}")]
+    public async Task<IActionResult> DeleteSubdomainAsync(string zone, string subdomain, CancellationToken cancellationToken)
+    {
+        await zoneRepository.UpdateZoneAsync(zone, z => z with { Subdomains = z.Subdomains.Except([subdomain]).ToList() }, cancellationToken);
 
         return Empty;
     }
