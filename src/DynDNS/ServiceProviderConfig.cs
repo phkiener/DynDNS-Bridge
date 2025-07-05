@@ -1,4 +1,5 @@
 using DynDNS.Framework;
+using DynDNS.Framework.Htmx;
 using DynDNS.Framework.Network;
 using DynDNS.WebInterface;
 using DynDNS.Zones;
@@ -31,6 +32,7 @@ public static class ServiceProviderConfig
         app.UseAntiforgery();
 
         app.MapRazorComponents<_Root>();
+        app.MapHtmxComponents(typeof(_Root).Assembly);
         app.MapControllers();
     }
 }

@@ -1,7 +1,7 @@
 <div class="d-inline-flex align-items-center gap-3">
     <div>IPv4: @(currentAddress.IPv4 ?? "None")</div>
     <div>IPv6: @(currentAddress.IPv6 ?? "None")</div>
-    <button type="button" class="btn btn-secondary btn-sm" hx-post="/interact/_refresh-address" hx-target="closest ul" hx-swap="outerHTML">
+    <button type="button" class="btn btn-secondary btn-sm" hx-get="@(RouteTemplate)?Refresh=true" hx-target="closest div" hx-swap="outerHTML">
         <i class="bi bi-arrow-repeat"></i> Reload
     </button>
 </div>
