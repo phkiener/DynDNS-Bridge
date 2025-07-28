@@ -1,7 +1,7 @@
 using DynDNS.Framework;
 using Microsoft.JSInterop;
 
-namespace DynDNS.WebInterface.Components;
+namespace DynDNS.Application.Components;
 
 public sealed partial class CurrentAddressWidget(ICurrentAddressProvider currentAddress, IJSRuntime runtime) : IDisposable
 {

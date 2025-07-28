@@ -1,8 +1,8 @@
-using DynDNS.Zones;
+using DynDNS.Domain.Zones;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
-namespace DynDNS.WebInterface.Pages;
+namespace DynDNS.Application.Pages;
 
 public sealed partial class Index(IZoneRepository zoneRepository, IDialogService dialogService) : ComponentBase
 {

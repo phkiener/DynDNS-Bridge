@@ -1,4 +1,4 @@
-namespace DynDNS.Zones;
+namespace DynDNS.Domain.Zones;
 
 public sealed record ZoneConfiguration(
     string Zone,

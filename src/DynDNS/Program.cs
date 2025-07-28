@@ -1,7 +1,7 @@
+using DynDNS.Application;
+using DynDNS.Domain.Zones;
 using DynDNS.Framework;
 using DynDNS.Framework.Network;
-using DynDNS.WebInterface;
-using DynDNS.Zones;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);

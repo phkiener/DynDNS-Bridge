@@ -21,6 +21,15 @@
     <_ContentIncludedByDefault Remove="wwwroot\fonts\bootstrap-icons.woff" />
     <_ContentIncludedByDefault Remove="wwwroot\fonts\bootstrap-icons.woff2" />
     <_ContentIncludedByDefault Remove="WebInterface\Primitives\DynButton.razor" />
+    <_ContentIncludedByDefault Remove="WebInterface\Pages\Index.razor" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Domain\" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <AdditionalFiles Include="Application\Pages\Index.razor" />
   </ItemGroup>
 </Project>
  
