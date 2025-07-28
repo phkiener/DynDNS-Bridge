@@ -7,7 +7,6 @@ public static class ServiceProviderConfig
 {
     public static void AddCoreServices(this IServiceCollection services)
     {
-        services.AddSingleton<IZoneRepository, ZoneRepository>();
         services.AddSingleton<IDomainRepository, InMemoryRepository>();
         
         services.AddSingleton<CurrentAddressProvider>();

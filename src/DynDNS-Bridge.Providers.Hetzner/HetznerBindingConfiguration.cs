@@ -12,13 +12,13 @@ public sealed class HetznerBindingConfiguration(string zoneId, string apiKey) : 
         return new Dictionary<string, string>
         {
             [nameof(ZoneId)] = ZoneId,
-            [nameof(ApiKey)] = ApiKey
+            ["API Key"] = ApiKey
         };
     }
 
     public override void Apply(IReadOnlyDictionary<string, string> values)
     {
         ZoneId = values.GetValueOrDefault(nameof(ZoneId), ZoneId);
-        ApiKey = values.GetValueOrDefault(nameof(ApiKey), ApiKey);
+        ApiKey = values.GetValueOrDefault("API Key", ApiKey);
     }
 }

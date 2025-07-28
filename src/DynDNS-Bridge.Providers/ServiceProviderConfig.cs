@@ -9,8 +9,13 @@ public static class ServiceProviderConfig
         return services.AddSingleton<ConfigurationProvider>();
     }
     
-    public static IServiceCollection AddProvider<TProvider>(this IServiceCollection services) where TProvider : class, IProvider
+    public static IServiceCollection AddProvider<TProvider, TClient>(this IServiceCollection services)
+        where TProvider : class, IProvider
+        where TClient : class, IProviderClient
     {
-        return services.AddSingleton<IProvider, TProvider>();
+        services.AddSingleton<IProvider, TProvider>();
+        services.AddScoped<IProviderClient, TClient>();
+
+        return services;
     }
 }

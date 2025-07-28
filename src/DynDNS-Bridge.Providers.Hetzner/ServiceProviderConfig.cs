@@ -7,6 +7,6 @@ public static class ServiceProviderConfig
 {
     public static IServiceCollection AddHetzner(this IServiceCollection services)
     {
-        return services.AddProvider<HetznerProvider>();
+        return services.AddProvider<HetznerProvider, HetznerClient>();
     }
 }
