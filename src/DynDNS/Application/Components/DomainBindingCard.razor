@@ -16,7 +16,10 @@
         </CardHeaderContent>
 
         <CardHeaderActions>
-            <MudIconButton Icon="@Icons.Material.Rounded.DeleteForever" Color="Color.Error"
+            <MudIconButton Icon="@Icons.Material.Rounded.Upload" Color="Color.Primary"
+                           OnClick="@(() => AppyBinding())"/>
+            
+            <MudIconButton Icon="@Icons.Material.Rounded.DeleteForever" Color="Color.Surface"
                            OnClick="@(() => DeleteDomain())"/>
         </CardHeaderActions>
     </MudCardHeader>
@@ -25,25 +28,40 @@
             <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
                 <MudSwitch @bind-Value="@Model.BindIPv4" Label="Bind IPv4" Color="Color.Primary" />
                 <MudSwitch @bind-Value="@Model.BindIPv6" Label="Bind IPv6" Color="Color.Primary" />
-
-                @foreach (var (key, value) in Model.Parameters)
-                {
-                    <MudStack Row>
-                        <MudText Typo="Typo.body1" Color="Color.Primary" Align="Align.End">@(key):</MudText>
-                        <MudText Typo="Typo.body1">@(value)</MudText>
-                        <MudIconButton Icon="@Icons.Material.Rounded.Edit" Size="Size.Small"/>
-                    </MudStack>
-                }
             </MudStack>
+            
+            @foreach (var (key, value) in Model.Parameters)
+            {
+                <MudStack Row Justify="Justify.FlexStart" AlignItems="AlignItems.Center">
+                    <MudText Typo="Typo.body1" Color="Color.Primary" Align="Align.End">@(key):</MudText>
+                    @if (editingKey == key)
+                    {
+                        <MudTextField @bind-Value="editedValue" Margin="Margin.Dense" />
+                        
+                        <MudIconButton Icon="@Icons.Material.Rounded.Save" Color="Color.Primary" Size="Size.Small" 
+                                       OnClick="@(() => EditConfig(key))"/>
+                        
+                        <MudIconButton Icon="@Icons.Material.Rounded.Cancel" Color="Color.Surface" Size="Size.Small"
+                                       OnClick="@(EndEditConfig)"/>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.body1">@(value)</MudText>
+                        <MudIconButton Icon="@Icons.Material.Rounded.Edit" Size="Size.Small" 
+                                       OnClick="@(() => BeginEditConfig(key))"/>
+                    }
+                </MudStack>
+            }
 
-            <MudDivider DividerType="DividerType.Inset"/>
+            <MudDivider DividerType="DividerType.Middle"/>
 
             <MudText Typo="Typo.subtitle1">
                 Subdomains
 
                 @if (!isAdding)
                 {
-                    <MudIconButton Icon="@Icons.Material.Rounded.Add" Size="Size.Small" OnClick="@BeginAddSubdomain"/>
+                    <MudIconButton Icon="@Icons.Material.Rounded.Add" Size="Size.Small" 
+                                   OnClick="@BeginAddSubdomain"/>
                 }
             </MudText>
 
@@ -63,8 +81,8 @@
                             <MudIconButton Icon="@Icons.Material.Rounded.Save" Color="Color.Primary" Size="Size.Small"
                                            OnClick="@(() => AddSubdomain(addedSubdomain))"/>
                             
-                            <MudIconButton Icon="@Icons.Material.Rounded.Cancel" Size="Size.Small"
-                                           OnClick="@(CancelAddSubdomain)"/>
+                            <MudIconButton Icon="@Icons.Material.Rounded.Cancel" Color="Color.Surface" Size="Size.Small"
+                                           OnClick="@(EndAddSubdomain)"/>
                         </MudStack>
                     </MudItem>
                 }
@@ -81,7 +99,7 @@
 
                     <MudItem xs="1">
                         <MudStack Row Justify="Justify.FlexEnd">
-                            <MudIconButton Icon="@Icons.Material.Rounded.Delete" Color="Color.Error" Size="Size.Small"
+                            <MudIconButton Icon="@Icons.Material.Rounded.Delete" Color="Color.Surface"  Size="Size.Small"
                                            OnClick="@(() => RemoveSubdomain(subdomain))"/>
                         </MudStack>
                     </MudItem>

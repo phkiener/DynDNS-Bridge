@@ -4,8 +4,10 @@
 <MudStack>
     @foreach (var item in Domains)
     {
-        <DomainBindingCard Model="item" 
+        <DomainBindingCard Model="item"
+                           OnApply="@(() => ApplyBinding(item))"
                            OnDelete="@(() => OnDelete(item))"
+                           OnConfigEdited="@(tuple => EditConfig(item, tuple.Key, tuple.Value))"
                            OnSubdomainAdded="@(subdomain => AddSubdomain(item, subdomain))"
                            OnSubdomainRemoved="@(subdomain => RemoveSubdomain(item, subdomain))" />
     }

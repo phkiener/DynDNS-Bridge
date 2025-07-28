@@ -28,11 +28,6 @@ public sealed partial class Index(IDomainRepository domainRepository, IDialogSer
         };
     }
 
-    private Task OnChange(DomainBindingModel model)
-    {
-        throw new NotImplementedException();
-    }
-
     private async Task OnDelete(DomainBindingModel model)
     {
         var domainBinding = await domainRepository.FindAsync(model.Domain);
@@ -85,5 +80,28 @@ public sealed partial class Index(IDomainRepository domainRepository, IDialogSer
         model.Subdomains.Remove(subdomain);
         
         StateHasChanged();
+    }
+
+    private async Task EditConfig(DomainBindingModel model, string key, string value)
+    {
+        var domainBinding = await domainRepository.FindAsync(model.Domain);
+        if (domainBinding is null)
+        {
+            return;
+        }
+
+        domainBinding.ChangeConfiguration(key, value);
+        model.Parameters[key] = value;
+        
+        StateHasChanged();
+    }
+
+    private async Task ApplyBinding(DomainBindingModel model)
+    {
+        var domainBinding = await domainRepository.FindAsync(model.Domain);
+        if (domainBinding is null)
+        {
+            return;
+        }
     }
 }

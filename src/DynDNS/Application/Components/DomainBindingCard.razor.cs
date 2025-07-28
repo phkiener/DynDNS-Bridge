@@ -18,13 +18,22 @@ public sealed partial class DomainBindingCard : ComponentBase
 {
     private bool isAdding = false;
     private string addedSubdomain = "";
+
+    private string? editingKey = null;
+    private string editedValue = "";
     
     [Parameter]
     [EditorRequired]
     public required DomainBindingModel Model { get; set; }
     
     [Parameter]
+    public EventCallback OnApply { get; set; }
+    
+    [Parameter]
     public EventCallback OnDelete { get; set; }
+    
+    [Parameter]
+    public EventCallback<(string Key, string Value)> OnConfigEdited { get; set; }
     
     [Parameter]
     public EventCallback<string> OnSubdomainAdded { get; set; }
@@ -40,7 +49,7 @@ public sealed partial class DomainBindingCard : ComponentBase
     private async Task AddSubdomain(string subdomain)
     {
         await OnSubdomainAdded.InvokeAsync(subdomain);
-        isAdding = false;
+        EndAddSubdomain();
     }
     
     private Task RemoveSubdomain(string subdomain)
@@ -54,9 +63,32 @@ public sealed partial class DomainBindingCard : ComponentBase
         isAdding = true;
     }
 
-    private void CancelAddSubdomain()
+    private void EndAddSubdomain()
     {
         addedSubdomain = "";
         isAdding = false;
+    }
+    
+    private async Task EditConfig(string key)
+    {
+        await OnConfigEdited.InvokeAsync((key, editedValue));
+        EndEditConfig();
+    }
+
+    private void BeginEditConfig(string key)
+    {
+        editingKey = key;
+        editedValue = Model.Parameters[key];
+    }
+
+    private void EndEditConfig()
+    {
+        editingKey = null;
+        editedValue = "";
+    }
+
+    private Task AppyBinding()
+    {
+        return OnApply.InvokeAsync();
     }
 }

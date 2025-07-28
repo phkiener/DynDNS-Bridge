@@ -60,4 +60,12 @@ public sealed class DomainBinding
 
         return binding;
     }
+
+    public void ChangeConfiguration(string key, string value)
+    {
+        var settings = Configuration.Snapshot().ToDictionary();
+        settings[key] = value;
+        
+        Configuration.Apply(settings);
+    }
 }
