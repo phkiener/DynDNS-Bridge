@@ -8,6 +8,11 @@ public sealed class CurrentAddressProvider(ILogger<CurrentAddressProvider> logge
     public string? IPv4 { get; private set; }
     public string? IPv6 { get; private set; }
 
+    public Task RefreshAsync(CancellationToken cancellationToken)
+    {
+        return RefreshCurrentAddressAsync(cancellationToken);
+    }
+
     public event EventHandler? AddressChanged;
 
     public override async Task StartAsync(CancellationToken cancellationToken)

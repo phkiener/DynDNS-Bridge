@@ -1,4 +1,5 @@
 using DynDNS.Application;
+using DynDNS.Application.Endpoints;
 using DynDNS.Core;
 using DynDNS.Providers;
 using MudBlazor.Services;
@@ -15,6 +16,8 @@ builder.Services.AddRazorComponents()
 
 var app = builder.Build();
 app.MapStaticAssets();
+
+app.Map("api/v1/refresh", ApplyBindingsEndpoint.Handle);
 app.MapRazorComponents<_Root>()
     .AddInteractiveServerRenderMode()
     .DisableAntiforgery();
