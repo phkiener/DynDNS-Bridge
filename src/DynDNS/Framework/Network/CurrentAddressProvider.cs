@@ -7,11 +7,8 @@ public sealed class CurrentAddressProvider(ILogger<CurrentAddressProvider> logge
     
     public string? IPv4 { get; private set; }
     public string? IPv6 { get; private set; }
-    
-    public async Task RefreshAsync(CancellationToken cancellationToken)
-    {
-        await RefreshCurrentAddressAsync(cancellationToken);
-    }
+
+    public event EventHandler? AddressChanged;
 
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
@@ -37,6 +34,8 @@ public sealed class CurrentAddressProvider(ILogger<CurrentAddressProvider> logge
             var client = httpClientFactory.CreateClient(nameof(CurrentAddressProvider));
             IPv4 = await DetermineIPv4Async(client, cancellationToken);
             IPv6 = await DetermineIPv6Async(client, cancellationToken);
+            
+            AddressChanged?.Invoke(this, EventArgs.Empty);
             
             logger.LogInformation("Current addresses: IPv4 - {IPv4}, IPv6 - {IPv6}",  IPv4 ?? "none", IPv6 ?? "none");
         }

@@ -6,6 +6,7 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <PackageReference Include="MudBlazor" />
     <PackageReference Include="Swallow.Blazor.AdvancedStyleIsolation" />
     <PackageReference Include="Swallow.Blazor.StaticAssetPaths" />
   </ItemGroup>
@@ -14,6 +15,12 @@
     <Content Update="appsettings.*.json">
       <DependentUpon>appsettings.json</DependentUpon>
     </Content>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\fonts\bootstrap-icons.woff" />
+    <_ContentIncludedByDefault Remove="wwwroot\fonts\bootstrap-icons.woff2" />
+    <_ContentIncludedByDefault Remove="WebInterface\Primitives\DynButton.razor" />
   </ItemGroup>
 </Project>
  

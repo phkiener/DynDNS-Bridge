@@ -1,0 +1,21 @@
+@inherits LayoutComponentBase
+
+<MudThemeProvider IsDarkMode />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar>
+        <MudText Typo="Typo.h5">DynDNS Bridge</MudText>
+        <MudSpacer />
+        
+        <CurrentAddressWidget />
+    </MudAppBar>
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Large" Class="py-6">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+

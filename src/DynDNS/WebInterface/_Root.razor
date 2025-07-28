@@ -1,36 +1,21 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
     <title>DynDNS Configuration</title>
     
     <ImportMap />
-    <link rel="stylesheet" href="@Assets[AssetPaths.Wwwroot.BootstrapMinCss]" />
-    <link rel="stylesheet" href="@Assets[AssetPaths.Wwwroot.BootstrapIconsMinCss]" />
-    <link rel="stylesheet" href="@Assets[AssetPaths.Wwwroot.BootstrapIconsExtraCss]" />
-    <script src="@Assets[AssetPaths.Wwwroot.BootstrapMinJs]"></script>
-    <script src="@Assets[AssetPaths.Wwwroot.HtmxMinJs]"></script>
+    
+    <link href="@Assets["font-roboto.css"]" rel="stylesheet" />
+    <link href="@Assets["_content/MudBlazor/MudBlazor.min.css"]" rel="stylesheet" />
+    
+    <HeadOutlet @rendermode="@RenderMode.InteractiveServer" />
 </head>
 
 <body>
-<header>
-    <nav class="navbar bg-body-tertiary">
-        <div class="container-fluid">
-            <span class="navbar-brand">DynDNS Configuration</span>
-            <CurrentConnection />
-        </div>
-    </nav>
-</header>
-
-<main class="container-lg">
-    <Router AppAssembly="@typeof(_Root).Assembly">
-        <Found>
-            <RouteView RouteData="context"/>
-        </Found>
-    </Router>
-</main>
+    <_Routes @rendermode="@RenderMode.InteractiveServer"/>
+    <script src="_framework/blazor.web.js"></script>
+    <script src="@Assets["_content/MudBlazor/MudBlazor.min.js"]"></script>
 </body>
-
 </html>

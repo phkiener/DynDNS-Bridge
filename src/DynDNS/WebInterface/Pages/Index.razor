@@ -1,0 +1,40 @@
+@page "/"
+
+<MudStack>
+    @foreach (var zone in Zones)
+    {
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderAvatar>
+                    <MudTooltip Inline Placement="Placement.Start">
+                        <ChildContent>
+                            <MudAvatar Color="Color.Primary">@zone.Provider.First()</MudAvatar>
+                        </ChildContent>
+                        <TooltipContent>
+                            @zone.Provider
+                        </TooltipContent>
+                    </MudTooltip>
+                </CardHeaderAvatar>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">@zone.Zone</MudText>
+                </CardHeaderContent>
+                <CardHeaderActions>
+                    <MudIconButton Icon="@Icons.Material.Rounded.Edit" />
+                    <MudIconButton Icon="@Icons.Material.Rounded.DeleteForever" Color="Color.Error" OnClick="@(() => DeleteZone(zone) )" />
+                </CardHeaderActions>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudStack>
+                    <MudList T="string" Dense>
+                        @foreach (var item in zone.Subdomains)
+                        {
+                            <MudListItem>
+                                <MudText Inline Color="Color.Primary">@(item)</MudText><MudText Inline>.@(zone.Zone)</MudText>
+                            </MudListItem>
+                        }
+                    </MudList>
+                </MudStack>
+            </MudCardContent>
+        </MudCard>
+    }
+</MudStack>
