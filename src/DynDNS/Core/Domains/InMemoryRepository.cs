@@ -37,13 +37,18 @@ public sealed class InMemoryRepository : IDomainRepository
         return Task.FromResult(domainBinding);
     }
 
+    public Task UpdateAsync(DomainBinding domain)
+    {
+        return Task.CompletedTask;
+    }
+
     public Task DeleteAsync(DomainBinding domain)
     {
         domainBindings.Remove(domain);
         return Task.CompletedTask;
     }
 
-    public Task Add(DomainBinding domain)
+    public Task AddAsync(DomainBinding domain)
     {
         domainBindings.Add(domain);
         return Task.CompletedTask;

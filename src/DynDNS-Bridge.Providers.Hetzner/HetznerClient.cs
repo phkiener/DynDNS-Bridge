@@ -2,8 +2,10 @@ namespace DynDNS.Providers.Hetzner;
 
 public sealed class HetznerClient : IProviderClient
 {
-    public Task Apply(DomainBindingConfiguration configuration)
+    public string Name => "Hetzner";
+
+    public Task ApplyAsync(DomainBindingConfiguration configuration)
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 }

@@ -6,7 +6,10 @@ public static class ServiceProviderConfig
 {
     public static IServiceCollection AddDomainProviders(this IServiceCollection services)
     {
-        return services.AddSingleton<ConfigurationProvider>();
+        services.AddSingleton<ConfigurationProvider>();
+        services.AddScoped<ClientProvider>();
+        
+        return services;
     }
     
     public static IServiceCollection AddProvider<TProvider, TClient>(this IServiceCollection services)

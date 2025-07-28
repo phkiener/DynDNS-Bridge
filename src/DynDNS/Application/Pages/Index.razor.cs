@@ -1,6 +1,7 @@
 using DynDNS.Application.Components;
 using DynDNS.Core;
 using DynDNS.Core.Domains;
+using DynDNS.Providers;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using ConfigurationProvider = DynDNS.Providers.ConfigurationProvider;
@@ -9,8 +10,10 @@ namespace DynDNS.Application.Pages;
 
 public sealed partial class Index(
     ConfigurationProvider configurationProvider,
+    ClientProvider clientProvider,
     IDomainRepository domainRepository,
-    IDialogService dialogService) : ComponentBase
+    IDialogService dialogService,
+    ISnackbar snackbar) : ComponentBase
 {
     private bool isAdding = false;
     private List<DomainBindingModel> Domains { get; set; } = [];
@@ -68,8 +71,9 @@ public sealed partial class Index(
         }
         
         domainBinding.AddSubdomain(subdomain);
-        model.Subdomains.Insert(0, subdomain);
+        await domainRepository.UpdateAsync(domainBinding);
         
+        model.Subdomains.Insert(0, subdomain);
         StateHasChanged();
     }
 
@@ -82,8 +86,9 @@ public sealed partial class Index(
         }
         
         domainBinding.RemoveSubdomain(subdomain);
-        model.Subdomains.Remove(subdomain);
+        await domainRepository.UpdateAsync(domainBinding);
         
+        model.Subdomains.Remove(subdomain);
         StateHasChanged();
     }
 
@@ -96,8 +101,9 @@ public sealed partial class Index(
         }
 
         domainBinding.ChangeConfiguration(key, value);
-        model.Parameters[key] = value;
+        await domainRepository.UpdateAsync(domainBinding);
         
+        model.Parameters[key] = value;
         StateHasChanged();
     }
 
@@ -108,6 +114,19 @@ public sealed partial class Index(
         {
             return;
         }
+
+        var client = clientProvider.Client(domainBinding.Provider);
+        await client.ApplyAsync(domainBinding.Configuration);
+
+        snackbar.Add(
+            $"Binding for {model.Domain} applied",
+            Severity.Success,
+            static opt =>
+            {
+                opt.ShowTransitionDuration = 250;
+                opt.HideTransitionDuration = 250;
+                opt.VisibleStateDuration = 1500;
+            });
     }
 
     private void BeginAdd()
@@ -126,11 +145,10 @@ public sealed partial class Index(
         configuration.Apply(model.Parameters);
         
         var domainBinding = DomainBinding.Create(model.Domain, configuration);
+        await domainRepository.AddAsync(domainBinding);
         
-        await domainRepository.Add(domainBinding);
         Domains.Add(Map(domainBinding));
         EndAdd();
-        
         StateHasChanged();
     }
 }
