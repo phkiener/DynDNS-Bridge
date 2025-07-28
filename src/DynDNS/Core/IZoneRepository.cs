@@ -1,4 +1,6 @@
-namespace DynDNS.Domain.Zones;
+using DynDNS.Core.Domains;
+
+namespace DynDNS.Core;
 
 public interface IZoneRepository
 {

@@ -1,4 +1,4 @@
-namespace DynDNS.Framework.Network;
+namespace DynDNS.Core.Network;
 
 public sealed class CurrentAddressProvider(ILogger<CurrentAddressProvider> logger, IHttpClientFactory httpClientFactory)
     : BackgroundService, ICurrentAddressProvider

@@ -7,4 +7,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DynDNS-Bridge.Providers\DynDNS-Bridge.Providers.csproj" />
+  </ItemGroup>
+
 </Project>

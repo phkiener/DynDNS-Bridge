@@ -1,38 +1,77 @@
 @page "/"
 
 <MudStack>
-    @foreach (var zone in Zones)
+    @foreach (var item in Domains)
     {
         <MudCard>
             <MudCardHeader>
                 <CardHeaderAvatar>
                     <MudTooltip Inline Placement="Placement.Start">
                         <ChildContent>
-                            <MudAvatar Color="Color.Primary">@zone.Provider.First()</MudAvatar>
+                            <MudAvatar Color="Color.Primary">@item.Provider.First()</MudAvatar>
                         </ChildContent>
                         <TooltipContent>
-                            @zone.Provider
+                            @item.Provider
                         </TooltipContent>
                     </MudTooltip>
                 </CardHeaderAvatar>
+                
                 <CardHeaderContent>
-                    <MudText Typo="Typo.h6">@zone.Zone</MudText>
+                    <MudText Typo="Typo.h6">@item.Id</MudText>
                 </CardHeaderContent>
+                
                 <CardHeaderActions>
-                    <MudIconButton Icon="@Icons.Material.Rounded.Edit" />
-                    <MudIconButton Icon="@Icons.Material.Rounded.DeleteForever" Color="Color.Error" OnClick="@(() => DeleteZone(zone) )" />
+                    <MudIconButton Icon="@Icons.Material.Rounded.DeleteForever" Color="Color.Error" OnClick="@(() => DeleteDomain(item))" />
                 </CardHeaderActions>
             </MudCardHeader>
             <MudCardContent>
                 <MudStack>
-                    <MudList T="string" Dense>
-                        @foreach (var item in zone.Subdomains)
+                    <MudText Typo="Typo.subtitle1">
+                        Configuration
+
+                        <MudIconButton Icon="@Icons.Material.Rounded.Edit" Size="Size.Small"/>
+                    </MudText>
+
+                    <MudGrid Spacing="2">
+                        @foreach (var (key, value) in item.Configuration.Snapshot())
                         {
-                            <MudListItem>
-                                <MudText Inline Color="Color.Primary">@(item)</MudText><MudText Inline>.@(zone.Zone)</MudText>
-                            </MudListItem>
+                            <MudItem xs="2">
+                                <MudText Color="Color.Primary" Align="Align.End">@(key):</MudText>
+                            </MudItem>
+
+                            <MudItem xs="10">
+                                <MudText>@(value)</MudText>
+                            </MudItem>
                         }
-                    </MudList>
+                    </MudGrid>
+                    
+                    <MudDivider DividerType="DividerType.Inset" />
+                    
+                    <MudText Typo="Typo.subtitle1">
+                        Subdomains
+
+                        <MudIconButton Icon="@Icons.Material.Rounded.Add" Size="Size.Small"/>
+                    </MudText>
+
+                    <MudGrid Spacing="0">
+                        @foreach (var subdomain in item.Subdomains)
+                        {
+                            <MudItem xs="2">
+                                <MudText Color="Color.Primary" Align="Align.End">@(subdomain)</MudText>
+                            </MudItem>
+
+                            <MudItem xs="8">
+                                <MudText>.@(item.Domain)</MudText>
+                            </MudItem>
+
+                            <MudItem xs="1">
+                                <MudStack Row Justify="Justify.FlexEnd">
+                                    <MudIconButton Icon="@Icons.Material.Rounded.Delete" Color="Color.Error" Size="Size.Small"/>
+                                </MudStack>
+                            </MudItem>
+                        }
+                    </MudGrid>
+
                 </MudStack>
             </MudCardContent>
         </MudCard>

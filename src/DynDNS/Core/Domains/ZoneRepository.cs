@@ -1,4 +1,4 @@
-namespace DynDNS.Domain.Zones;
+namespace DynDNS.Core.Domains;
 
 public sealed class ZoneRepository : IZoneRepository
 {

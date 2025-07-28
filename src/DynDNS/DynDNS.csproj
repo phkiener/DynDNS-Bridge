@@ -25,11 +25,12 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Folder Include="Domain\" />
+    <AdditionalFiles Include="Application\Pages\Index.razor" />
   </ItemGroup>
   
   <ItemGroup>
-    <AdditionalFiles Include="Application\Pages\Index.razor" />
+    <ProjectReference Include="..\DynDNS-Bridge.Providers.Hetzner\DynDNS-Bridge.Providers.Hetzner.csproj" />
+    <ProjectReference Include="..\DynDNS-Bridge.Providers\DynDNS-Bridge.Providers.csproj" />
   </ItemGroup>
 </Project>
  

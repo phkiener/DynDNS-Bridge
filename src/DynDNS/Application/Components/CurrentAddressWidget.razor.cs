@@ -1,4 +1,4 @@
-using DynDNS.Framework;
+using DynDNS.Core;
 using Microsoft.JSInterop;
 
 namespace DynDNS.Application.Components;
