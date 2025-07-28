@@ -1,79 +1,12 @@
 @page "/"
+@using DynDNS.Application.Components
 
 <MudStack>
     @foreach (var item in Domains)
     {
-        <MudCard>
-            <MudCardHeader>
-                <CardHeaderAvatar>
-                    <MudTooltip Inline Placement="Placement.Start">
-                        <ChildContent>
-                            <MudAvatar Color="Color.Primary">@item.Provider.First()</MudAvatar>
-                        </ChildContent>
-                        <TooltipContent>
-                            @item.Provider
-                        </TooltipContent>
-                    </MudTooltip>
-                </CardHeaderAvatar>
-                
-                <CardHeaderContent>
-                    <MudText Typo="Typo.h6">@item.Id</MudText>
-                </CardHeaderContent>
-                
-                <CardHeaderActions>
-                    <MudIconButton Icon="@Icons.Material.Rounded.DeleteForever" Color="Color.Error" OnClick="@(() => DeleteDomain(item))" />
-                </CardHeaderActions>
-            </MudCardHeader>
-            <MudCardContent>
-                <MudStack>
-                    <MudText Typo="Typo.subtitle1">
-                        Configuration
-
-                        <MudIconButton Icon="@Icons.Material.Rounded.Edit" Size="Size.Small"/>
-                    </MudText>
-
-                    <MudGrid Spacing="2">
-                        @foreach (var (key, value) in item.Configuration.Snapshot())
-                        {
-                            <MudItem xs="2">
-                                <MudText Color="Color.Primary" Align="Align.End">@(key):</MudText>
-                            </MudItem>
-
-                            <MudItem xs="10">
-                                <MudText>@(value)</MudText>
-                            </MudItem>
-                        }
-                    </MudGrid>
-                    
-                    <MudDivider DividerType="DividerType.Inset" />
-                    
-                    <MudText Typo="Typo.subtitle1">
-                        Subdomains
-
-                        <MudIconButton Icon="@Icons.Material.Rounded.Add" Size="Size.Small"/>
-                    </MudText>
-
-                    <MudGrid Spacing="0">
-                        @foreach (var subdomain in item.Subdomains)
-                        {
-                            <MudItem xs="2">
-                                <MudText Color="Color.Primary" Align="Align.End">@(subdomain)</MudText>
-                            </MudItem>
-
-                            <MudItem xs="8">
-                                <MudText>.@(item.Domain)</MudText>
-                            </MudItem>
-
-                            <MudItem xs="1">
-                                <MudStack Row Justify="Justify.FlexEnd">
-                                    <MudIconButton Icon="@Icons.Material.Rounded.Delete" Color="Color.Error" Size="Size.Small"/>
-                                </MudStack>
-                            </MudItem>
-                        }
-                    </MudGrid>
-
-                </MudStack>
-            </MudCardContent>
-        </MudCard>
+        <DomainBindingCard Model="item" 
+                           OnDelete="@(() => OnDelete(item))"
+                           OnSubdomainAdded="@(subdomain => AddSubdomain(item, subdomain))"
+                           OnSubdomainRemoved="@(subdomain => RemoveSubdomain(item, subdomain))" />
     }
 </MudStack>

@@ -31,6 +31,12 @@ public sealed class InMemoryRepository : IDomainRepository
         return Task.FromResult<IReadOnlyList<DomainBinding>>(domainBindings);
     }
 
+    public Task<DomainBinding?> FindAsync(string domain)
+    {
+        var domainBinding = domainBindings.FirstOrDefault(d => d.Domain == domain);
+        return Task.FromResult(domainBinding);
+    }
+
     public Task DeleteAsync(DomainBinding domain)
     {
         domainBindings.Remove(domain);
