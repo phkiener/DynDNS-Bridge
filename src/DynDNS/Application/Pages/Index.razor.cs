@@ -3,11 +3,16 @@ using DynDNS.Core;
 using DynDNS.Core.Domains;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using ConfigurationProvider = DynDNS.Providers.ConfigurationProvider;
 
 namespace DynDNS.Application.Pages;
 
-public sealed partial class Index(IDomainRepository domainRepository, IDialogService dialogService) : ComponentBase
+public sealed partial class Index(
+    ConfigurationProvider configurationProvider,
+    IDomainRepository domainRepository,
+    IDialogService dialogService) : ComponentBase
 {
+    private bool isAdding = false;
     private List<DomainBindingModel> Domains { get; set; } = [];
 
     protected override async Task OnInitializedAsync()
@@ -103,5 +108,29 @@ public sealed partial class Index(IDomainRepository domainRepository, IDialogSer
         {
             return;
         }
+    }
+
+    private void BeginAdd()
+    {
+        isAdding = true;
+    }
+
+    private void EndAdd()
+    {
+        isAdding = false;
+    }
+
+    private async Task CreateDomainBinding(CreateDomainBindingModel model)
+    {
+        var configuration = configurationProvider.Default(model.Provider);
+        configuration.Apply(model.Parameters);
+        
+        var domainBinding = DomainBinding.Create(model.Domain, configuration);
+        
+        await domainRepository.Add(domainBinding);
+        Domains.Add(Map(domainBinding));
+        EndAdd();
+        
+        StateHasChanged();
     }
 }

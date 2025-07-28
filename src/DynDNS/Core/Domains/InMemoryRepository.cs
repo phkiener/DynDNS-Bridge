@@ -42,4 +42,10 @@ public sealed class InMemoryRepository : IDomainRepository
         domainBindings.Remove(domain);
         return Task.CompletedTask;
     }
+
+    public Task Add(DomainBinding domain)
+    {
+        domainBindings.Add(domain);
+        return Task.CompletedTask;
+    }
 }
