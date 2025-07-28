@@ -12,6 +12,7 @@ public sealed partial class Index(
     ConfigurationProvider configurationProvider,
     ClientProvider clientProvider,
     IDomainRepository domainRepository,
+    ICurrentAddressProvider currentAddressProvider,
     IDialogService dialogService,
     ISnackbar snackbar) : ComponentBase
 {
@@ -116,7 +117,11 @@ public sealed partial class Index(
         }
 
         var client = clientProvider.Client(domainBinding.Provider);
-        await client.ApplyAsync(domainBinding.Configuration);
+        await client.ApplyAsync(
+            configuration: domainBinding.Configuration,
+            subdomains: domainBinding.Subdomains.ToList(),
+            targetAddressIPv4: domainBinding.BindIPv4 ? currentAddressProvider.IPv4 : null,
+            targetAddressIPv6: domainBinding.BindIPv6 ? currentAddressProvider.IPv6 : null);
 
         snackbar.Add(
             $"Binding for {model.Domain} applied",
