@@ -1,7 +1,7 @@
 using DynDNS.Core.Abstractions;
 using DynDNS.Core.Abstractions.Models;
 
-namespace DynDNS.Core;
+namespace DynDNS.Core.UseCases;
 
 /// <inheritdoc />
 /// <param name="repository">The <see cref="IDomainBindingRepository"/> to use for persistence</param>
@@ -41,14 +41,22 @@ public sealed class DomainBindingsService(IDomainBindingRepository repository) :
             .Select(MapBinding)
             .OrderBy(b => (string)b.Domain)
             .ToList();
+    }
 
-        static DomainBinding MapBinding(Model.DomainBinding entity)
-        {
-            var subdomains = entity.Subdomains.Select(MapSubdomain).ToArray();
+    /// <inheritdoc />
+    public async Task<DomainBinding?> FindDomainBindingAsync(Hostname hostname)
+    {
+        var existingBinding = await repository.GetByHostnameAsync(hostname);
+        
+        return existingBinding is null ? null : MapBinding(existingBinding);
+    }
 
-            return new DomainBinding(entity.Id, entity.Provider, entity.Hostname, subdomains, entity.ProviderConfiguration);
-        }
+    private static DomainBinding MapBinding(Model.DomainBinding entity)
+    {
+        var subdomains = entity.Subdomains.Select(MapSubdomain).ToArray();
 
+        return new DomainBinding(entity.Id, entity.Provider, entity.Hostname, subdomains, entity.ProviderConfiguration);
+        
         static DomainBinding.Subdomain MapSubdomain(Model.Subdomain entity)
         {
             var flags = SubdomainFlags.None;
@@ -59,7 +67,7 @@ public sealed class DomainBindingsService(IDomainBindingRepository repository) :
             
             if (entity.CreateIPv6Record)
             {
-                flags |= SubdomainFlags.A;
+                flags |= SubdomainFlags.AAAA;
             }
             
             return new DomainBinding.Subdomain(entity.Name, flags);

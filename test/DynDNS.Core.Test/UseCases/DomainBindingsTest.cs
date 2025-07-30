@@ -2,7 +2,7 @@ using DynDNS.Core.Abstractions;
 using DynDNS.Core.Abstractions.Models;
 using DynDNS.Core.Test.Framework;
 
-namespace DynDNS.Core.Test;
+namespace DynDNS.Core.Test.UseCases;
 
 [UseDependencyInjection]
 public sealed class DomainBindingsTest(IDomainBindings domainBindings)
@@ -20,9 +20,8 @@ public sealed class DomainBindingsTest(IDomainBindings domainBindings)
     {
         await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"), "Mock");
         
-        var bindings = await domainBindings.GetDomainBindingsAsync();
-        var binding = bindings.SingleOrDefault();
-
+        var binding = await domainBindings.FindDomainBindingAsync(Hostname.From("example.com"));
+        
         await Assert.That(binding).IsNotNull();
         await Assert.That(binding!.Id).IsEqualTo(new DomainBindingId("example.com"));
         await Assert.That(binding.Domain).IsEqualTo(Hostname.From("example.com"));

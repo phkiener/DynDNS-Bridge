@@ -1,5 +1,6 @@
 using DynDNS.Core.Abstractions;
 using DynDNS.Core.Infrastructure;
+using DynDNS.Core.UseCases;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -17,6 +18,7 @@ public static class ServiceProviderConfiguration
     public static IServiceCollection AddCoreServices(this IServiceCollection services)
     {
         services.AddScoped<IDomainBindings, DomainBindingsService>();
+        services.AddScoped<ISubdomains, SubdomainsService>();
 
         return services;
     }

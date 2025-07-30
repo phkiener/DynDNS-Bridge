@@ -14,6 +14,11 @@ internal sealed class InMemoryRepository : IDomainBindingRepository
         return Task.CompletedTask;
     }
 
+    public Task UpdateAsync(DomainBinding domainBinding)
+    {
+        return Task.CompletedTask;
+    }
+
     public Task<IReadOnlyCollection<DomainBinding>> GetAllAsync()
     {
         return Task.FromResult<IReadOnlyCollection<DomainBinding>>(bindings);
@@ -22,6 +27,12 @@ internal sealed class InMemoryRepository : IDomainBindingRepository
     public Task<DomainBinding?> GetByIdAsync(DomainBindingId id)
     {
         var binding = bindings.FirstOrDefault(b => b.Id == id);
+        return Task.FromResult(binding);
+    }
+
+    public Task<DomainBinding?> GetByHostnameAsync(Hostname hostname)
+    {
+        var binding = bindings.FirstOrDefault(b => b.Hostname == hostname);
         return Task.FromResult(binding);
     }
 

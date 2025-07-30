@@ -31,4 +31,11 @@ public interface IDomainBindings
     /// </summary>
     /// <returns>A list of all found domain bindings.</returns>
     Task<IReadOnlyCollection<DomainBinding>> GetDomainBindingsAsync();
+    
+    /// <summary>
+    /// Find a domain binding by its hostname.
+    /// </summary>
+    /// <param name="hostname">The hostname whose domain binding to find</param>
+    /// <returns>The found domain binding or <c>null</c>.</returns>
+    Task<DomainBinding?> FindDomainBindingAsync(Hostname hostname);
 }
