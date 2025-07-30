@@ -15,10 +15,28 @@
   <Folder Name="/Additional Items/Workflows/">
     <File Path=".github/workflows/publish-container.yaml" />
   </Folder>
-  <Folder Name="/Providers/">
-    <Project Path="src/DynDNS-Bridge.Providers.Hetzner/DynDNS-Bridge.Providers.Hetzner.csproj" />
-    <Project Path="src\DynDNS-Bridge.Providers\DynDNS-Bridge.Providers.csproj" />
+  <Folder Name="/V0/">
+    <Project Path="src/DynDNS-Bridge/DynDNS-Bridge.csproj" />
   </Folder>
-  <Project Path="src/DynDNS-Bridge/DynDNS-Bridge.csproj" />
-  <Project Path="src/DynDNS/DynDNS.csproj" />
+  <Folder Name="/V1/">
+    <Project Path="src/DynDNS/DynDNS.csproj" />
+  </Folder>
+  <Folder Name="/V1/Providers/">
+    <Project Path="src/DynDNS-Bridge.Providers.Hetzner/DynDNS-Bridge.Providers.Hetzner.csproj" />
+    <Project Path="src/DynDNS-Bridge.Providers/DynDNS-Bridge.Providers.csproj" />
+  </Folder>
+  <Folder Name="/V2/">
+    <Project Path="src/DynDNS.Host/DynDNS.Host.csproj" />
+    <Project Path="src/DynDNS.Web/DynDNS.Web.csproj" />
+  </Folder>
+  <Folder Name="/V2/Core/">
+    <Project Path="src/DynDNS.Core.Abstractions/DynDNS.Core.Abstractions.csproj" />
+    <Project Path="src/DynDNS.Core/DynDNS.Core.csproj" />
+    <Project Path="test/DynDNS.Core.Test/DynDNS.Core.Test.csproj" />
+  </Folder>
+  <Folder Name="/V2/Providers/">
+    <Project Path="src/DynDNS.Provider.Abstractions/DynDNS.Provider.Abstractions.csproj" />
+    <Project Path="src/DynDNS.Provider.Hetzner/DynDNS.Provider.Hetzner.csproj" />
+    <Project Path="test/DynDNS.Provider.Hetzner.Test/DynDNS.Provider.Hetzner.Test.csproj" />
+  </Folder>
 </Solution>
