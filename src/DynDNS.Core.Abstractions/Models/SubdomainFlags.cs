@@ -7,12 +7,17 @@ namespace DynDNS.Core.Abstractions.Models;
 public enum SubdomainFlags
 {
     /// <summary>
+    /// Create no records at all.
+    /// </summary>
+    None = 0,
+    
+    /// <summary>
     /// Create an A-record (for IPv4) when binding the subdomain.
     /// </summary>
-    A = 4,
+    A = 1,
     
     /// <summary>
     /// Create an AAAA-record (for IPv6) when binding the subdomain.
     /// </summary>
-    AAAA = 6
+    AAAA = 2
 }

@@ -6,7 +6,7 @@ public sealed class UseDependencyInjectionAttribute : DependencyInjectionDataSou
 {
     private static readonly IServiceProvider SharedServiceProvider = new ServiceCollection()
         .AddCoreServices()
-        .UseTransientCore()
+        .UseTransientCore(useScopes: true)
         .BuildServiceProvider();
 
     public override IServiceScope CreateScope(DataGeneratorMetadata dataGeneratorMetadata)
