@@ -10,4 +10,8 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DynDNS.Core.Abstractions\DynDNS.Core.Abstractions.csproj" />
+  </ItemGroup>
+
 </Project>
