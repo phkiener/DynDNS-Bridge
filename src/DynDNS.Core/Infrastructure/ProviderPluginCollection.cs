@@ -11,6 +11,11 @@ public sealed class ProviderPluginCollection(IEnumerable<IProviderPlugin> provid
     private readonly IReadOnlyDictionary<string, IProviderPlugin> plugins = providerPlugins.ToDictionary(static x => x.Name);
 
     /// <summary>
+    /// Enumerate all registered plugins.
+    /// </summary>
+    public IEnumerable<IProviderPlugin> Plugins => plugins.Values;
+
+    /// <summary>
     /// Find a specific plugin by name.
     /// </summary>
     /// <param name="name">Name of the plugin to retrieve.</param>

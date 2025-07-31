@@ -19,6 +19,7 @@ public static class ServiceProviderConfiguration
     {
         services.AddScoped<IDomainBindings, DomainBindingsService>();
         services.AddScoped<ISubdomains, SubdomainsService>();
+        services.AddScoped<IProviderConfigurations, ProviderConfigurationsService>();
         services.AddSingleton<ProviderPluginCollection>();
 
         return services;

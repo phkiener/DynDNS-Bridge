@@ -8,9 +8,14 @@ namespace DynDNS.Core.Test.Framework;
 public sealed class MockProvider : IProviderPlugin
 {
     public const string Name = "Mock";
+    public const string ParameterName = "Parameter";
 
     string IProviderPlugin.Name => Name;
-    IReadOnlyCollection<ProviderConfigurationParameter> IProviderPlugin.Parameters { get; } = [];
+
+    IReadOnlyCollection<ProviderConfigurationParameter> IProviderPlugin.Parameters { get; } =
+    [
+        new(ParameterName, true, ParameterType.Text)
+    ];
 }
 
 public static class MockProviderExtensions
