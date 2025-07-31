@@ -8,57 +8,40 @@ namespace DynDNS.Core.Model;
 /// <param name="id">Unique identifier for the domain binding.</param>
 /// <param name="hostname">The domain which is to be configured.</param>
 /// <param name="subdomains">All subdomains to configure on the domain.</param>
-/// <param name="provider">The provider in which to create the DNS records.</param>
-/// <param name="providerConfiguration">Configuration parameters for the chosen provider.</param>
 public sealed class DomainBinding(
     DomainBindingId id,
     Hostname hostname,
-    IReadOnlyCollection<Subdomain> subdomains,
-    string provider,
-    IReadOnlyDictionary<string, object> providerConfiguration)
+    IReadOnlyCollection<Subdomain> subdomains)
 {
     private readonly Dictionary<DomainFragment, Subdomain> subdomains = subdomains.ToDictionary(static s => s.Name, static s => s);
 
     /// <summary>
     /// Create a new domain binding.
     /// </summary>
-    /// <param name="hostname">The domain which is to be configured.<</param>
-    /// <param name="provider">The provider in which to create the DNS records.</param>
-    public DomainBinding(Hostname hostname, string provider)
+    /// <param name="hostname">The domain which is to be configured.</param>
+    public DomainBinding(Hostname hostname)
         : this(
             id: new DomainBindingId(hostname),
             hostname: hostname,
-            subdomains: [],
-            provider: provider,
-            providerConfiguration: new Dictionary<string, object>())
+            subdomains: [])
     {
-        
+
     }
-    
+
     /// <summary>
     /// Unique identifier for the domain binding.
     /// </summary>
     public DomainBindingId Id { get; } = id;
-    
+
     /// <summary>
     /// The domain which is to be configured.
     /// </summary>
     public Hostname Hostname { get; } = hostname;
-    
-    /// <summary>
-    /// The provider in which to create the DNS records.
-    /// </summary>
-    public string Provider { get; } = provider;
-    
+
     /// <summary>
     /// All <see cref="Subdomain"/>s to configure on the domain.
     /// </summary>
     public IReadOnlyList<Subdomain> Subdomains => subdomains.Values.ToList().AsReadOnly();
-    
-    /// <summary>
-    /// Configuration parameters for the chosen <see cref="Provider"/>.
-    /// </summary>
-    public IReadOnlyDictionary<string, object> ProviderConfiguration { get; } = providerConfiguration;
 
     /// <summary>
     /// Add a new subdomain to this binding.
@@ -70,11 +53,11 @@ public sealed class DomainBinding(
         {
             return;
         }
-        
+
         var subdomain = new Subdomain(name);
         subdomains.Add(name, subdomain);
     }
-    
+
     /// <summary>
     /// Find a configured subdomain by its name.
     /// </summary>
@@ -84,7 +67,7 @@ public sealed class DomainBinding(
     {
         return subdomains.GetValueOrDefault(name);
     }
-    
+
     /// <summary>
     /// Remove a new subdomain from this binding.
     /// </summary>

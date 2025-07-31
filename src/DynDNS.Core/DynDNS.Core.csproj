@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DynDNS.Core.Abstractions\DynDNS.Core.Abstractions.csproj" />
-    <ProjectReference Include="..\DynDNS.Provider.Abstractions\DynDNS.Provider.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

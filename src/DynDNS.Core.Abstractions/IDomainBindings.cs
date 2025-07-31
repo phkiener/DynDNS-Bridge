@@ -8,17 +8,15 @@ namespace DynDNS.Core.Abstractions;
 public interface IDomainBindings
 {
     /// <summary>
-    /// Create a new domain binding for <see cref="domain"/> using provider <see cref="provider"/>.
+    /// Create a new domain binding for <see cref="domain"/>.
     /// </summary>
     /// <param name="domain">The <see cref="Hostname"/> to bind.</param>
-    /// <param name="provider">The provider to use when binding the hostname.</param>
     /// <returns>The <see cref="DomainBindingId"/> for the newly created domain binding.</returns>
     /// <remarks>
-    /// Use <see cref="IProviderConfigurations"/> to set up the required parameters for the provider.
     /// Use <see cref="ISubdomains"/> to manage the subdomains to bind for this domain.
     /// </remarks>
-    Task<DomainBindingId> CreateDomainBindingAsync(Hostname domain, string provider);
-    
+    Task<DomainBindingId> CreateDomainBindingAsync(Hostname domain);
+
     /// <summary>
     /// Remove a domain binding, including all subdomains and provider configuration parameters.
     /// If any subdomains are configured, all matching DNS records will be deleted from the provider.
@@ -31,7 +29,7 @@ public interface IDomainBindings
     /// </summary>
     /// <returns>A list of all found domain bindings.</returns>
     Task<IReadOnlyCollection<DomainBinding>> GetDomainBindingsAsync();
-    
+
     /// <summary>
     /// Find a domain binding by its hostname.
     /// </summary>

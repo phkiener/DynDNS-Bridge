@@ -6,19 +6,10 @@ namespace DynDNS.Core.Abstractions.Models;
 /// <param name="Id">Id of the domain binding.</param>
 /// <param name="Domain">The common hostname of this binding.</param>
 /// <param name="Subdomains">The subdomains configured for this binding.</param>
-/// <param name="Provider">The provider used to manage DNS records.</param>
-/// <param name="ProviderConfigurationParameters">Configuration parameters used for the provider.</param>
-/// <remarks>
-/// To make sense of the <see cref="ProviderConfigurationParameters"/>, see the
-/// <see cref="AvailableProvider.ConfigurationParameters"/> in <see cref="AvailableProvider"/> retrieved
-/// via <see cref="IProviderConfigurations"/>.
-/// </remarks>
 public sealed record DomainBinding(
     DomainBindingId Id,
-    string Provider,
     Hostname Domain,
-    DomainBinding.Subdomain[] Subdomains,
-    IReadOnlyDictionary<string, object> ProviderConfigurationParameters)
+    DomainBinding.Subdomain[] Subdomains)
 {
     /// <summary>
     /// A subdomain as part of a <see cref="DomainBinding"/>.

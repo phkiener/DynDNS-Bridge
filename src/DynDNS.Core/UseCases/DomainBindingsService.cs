@@ -1,17 +1,14 @@
 using DynDNS.Core.Abstractions;
 using DynDNS.Core.Abstractions.Models;
-using DynDNS.Core.Infrastructure;
-using DynDNS.Provider.Abstractions;
 
 namespace DynDNS.Core.UseCases;
 
 /// <inheritdoc />
 /// <param name="repository">The <see cref="IDomainBindingRepository"/> to use for persistence.</param>
-/// <param name="pluginCollection">A collection of all registered <see cref="IProviderPlugin"/>s.</param>
-public sealed class DomainBindingsService(IDomainBindingRepository repository, ProviderPluginCollection pluginCollection) : IDomainBindings
+public sealed class DomainBindingsService(IDomainBindingRepository repository) : IDomainBindings
 {
     /// <inheritdoc />
-    public async Task<DomainBindingId> CreateDomainBindingAsync(Hostname domain, string provider)
+    public async Task<DomainBindingId> CreateDomainBindingAsync(Hostname domain)
     {
         var existingBinding = await repository.GetByIdAsync(new DomainBindingId(domain));
         if (existingBinding is not null)
@@ -19,13 +16,7 @@ public sealed class DomainBindingsService(IDomainBindingRepository repository, P
             return existingBinding.Id;
         }
 
-        var plugin = pluginCollection.GetPlugin(provider);
-        if (plugin is null)
-        {
-            throw new InvalidOperationException($"Unknown provider '{provider}'.");
-        }
-
-        var domainBinding = new Model.DomainBinding(domain, provider);
+        var domainBinding = new Model.DomainBinding(domain);
         await repository.AddAsync(domainBinding);
 
         return domainBinding.Id;
@@ -56,7 +47,7 @@ public sealed class DomainBindingsService(IDomainBindingRepository repository, P
     public async Task<DomainBinding?> FindDomainBindingAsync(Hostname hostname)
     {
         var existingBinding = await repository.GetByHostnameAsync(hostname);
-        
+
         return existingBinding is null ? null : MapBinding(existingBinding);
     }
 
@@ -64,8 +55,8 @@ public sealed class DomainBindingsService(IDomainBindingRepository repository, P
     {
         var subdomains = entity.Subdomains.Select(MapSubdomain).ToArray();
 
-        return new DomainBinding(entity.Id, entity.Provider, entity.Hostname, subdomains, entity.ProviderConfiguration);
-        
+        return new DomainBinding(entity.Id, entity.Hostname, subdomains);
+
         static DomainBinding.Subdomain MapSubdomain(Model.Subdomain entity)
         {
             var flags = SubdomainFlags.None;
@@ -73,12 +64,12 @@ public sealed class DomainBindingsService(IDomainBindingRepository repository, P
             {
                 flags |= SubdomainFlags.A;
             }
-            
+
             if (entity.CreateIPv6Record)
             {
                 flags |= SubdomainFlags.AAAA;
             }
-            
+
             return new DomainBinding.Subdomain(entity.Name, flags);
         }
     }

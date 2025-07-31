@@ -18,31 +18,22 @@ public sealed class DomainBindingsTest(IDomainBindings domainBindings)
     [Test]
     public async Task CanCreateDomainBinding()
     {
-        await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"), MockProvider.Name);
+        await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"));
 
         var binding = await domainBindings.FindDomainBindingAsync(Hostname.From("example.com"));
 
         await Assert.That(binding).IsNotNull();
         await Assert.That(binding!.Id).IsEqualTo(new DomainBindingId("example.com"));
         await Assert.That(binding.Domain).IsEqualTo(Hostname.From("example.com"));
-        await Assert.That(binding.Provider).IsEqualTo(MockProvider.Name);
         await Assert.That(binding.Subdomains).IsEmpty();
-        await Assert.That(binding.ProviderConfigurationParameters).IsEmpty();
-    }
-
-    [Test]
-    public async Task ThrowsException_WhenProviderDoesNotExist()
-    {
-        await Assert.ThrowsAsync<InvalidOperationException>(
-            () => domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"), "Foobar"));
     }
 
     [Test]
     public async Task AddingDomainBinding_IsIdempotent()
     {
-        await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"), MockProvider.Name);
-        await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"), MockProvider.Name);
-        
+        await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"));
+        await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"));
+
         var bindings = await domainBindings.GetDomainBindingsAsync();
         await Assert.That(bindings).HasCount(1);
     }
@@ -50,9 +41,9 @@ public sealed class DomainBindingsTest(IDomainBindings domainBindings)
     [Test]
     public async Task DomainBindingsCanBeRemoved()
     {
-        await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"), MockProvider.Name);
+        await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"));
         await domainBindings.RemoveDomainBindingAsync(new DomainBindingId("example.com"));
-        
+
         var bindings = await domainBindings.GetDomainBindingsAsync();
         await Assert.That(bindings).IsEmpty();
     }
@@ -61,7 +52,7 @@ public sealed class DomainBindingsTest(IDomainBindings domainBindings)
     public async Task NothingHappens_WhenRemovingNonexistentBinding()
     {
         await domainBindings.RemoveDomainBindingAsync(new DomainBindingId("example.com"));
-        
+
         var bindings = await domainBindings.GetDomainBindingsAsync();
         await Assert.That(bindings).IsEmpty();
     }

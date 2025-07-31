@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\DynDNS.Core\DynDNS.Core.csproj" />
-    <ProjectReference Include="..\..\src\DynDNS.Provider.Abstractions\DynDNS.Provider.Abstractions.csproj" />
   </ItemGroup>
 
 </Project>

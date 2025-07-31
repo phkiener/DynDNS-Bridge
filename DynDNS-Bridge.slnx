@@ -34,9 +34,4 @@
     <Project Path="src/DynDNS.Core/DynDNS.Core.csproj" />
     <Project Path="test/DynDNS.Core.Test/DynDNS.Core.Test.csproj" />
   </Folder>
-  <Folder Name="/V2/Providers/">
-    <Project Path="src/DynDNS.Provider.Abstractions/DynDNS.Provider.Abstractions.csproj" />
-    <Project Path="src/DynDNS.Provider.Hetzner/DynDNS.Provider.Hetzner.csproj" />
-    <Project Path="test/DynDNS.Provider.Hetzner.Test/DynDNS.Provider.Hetzner.Test.csproj" />
-  </Folder>
 </Solution>
