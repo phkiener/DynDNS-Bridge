@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DynDNS.Core.Abstractions\DynDNS.Core.Abstractions.csproj" />
+  </ItemGroup>
+
 </Project>

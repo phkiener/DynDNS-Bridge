@@ -1,11 +1,14 @@
 using DynDNS.Core.Abstractions;
 using DynDNS.Core.Abstractions.Models;
+using DynDNS.Core.Infrastructure;
+using DynDNS.Provider.Abstractions;
 
 namespace DynDNS.Core.UseCases;
 
 /// <inheritdoc />
-/// <param name="repository">The <see cref="IDomainBindingRepository"/> to use for persistence</param>
-public sealed class DomainBindingsService(IDomainBindingRepository repository) : IDomainBindings
+/// <param name="repository">The <see cref="IDomainBindingRepository"/> to use for persistence.</param>
+/// <param name="pluginCollection">A collection of all registered <see cref="IProviderPlugin"/>s.</param>
+public sealed class DomainBindingsService(IDomainBindingRepository repository, ProviderPluginCollection pluginCollection) : IDomainBindings
 {
     /// <inheritdoc />
     public async Task<DomainBindingId> CreateDomainBindingAsync(Hostname domain, string provider)
@@ -16,9 +19,15 @@ public sealed class DomainBindingsService(IDomainBindingRepository repository) :
             return existingBinding.Id;
         }
 
+        var plugin = pluginCollection.GetPlugin(provider);
+        if (plugin is null)
+        {
+            throw new InvalidOperationException($"Unknown provider '{provider}'.");
+        }
+
         var domainBinding = new Model.DomainBinding(domain, provider);
         await repository.AddAsync(domainBinding);
-        
+
         return domainBinding.Id;
     }
 

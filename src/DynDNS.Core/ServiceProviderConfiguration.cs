@@ -14,11 +14,12 @@ public static class ServiceProviderConfiguration
     /// <summary>
     /// Register the required services.
     /// </summary>
-    /// <param name="services">The <see cref="IServiceCollection"/> in which to replace the services.</param>
+    /// <param name="services">The <see cref="IServiceCollection"/> in which to register the services.</param>
     public static IServiceCollection AddCoreServices(this IServiceCollection services)
     {
         services.AddScoped<IDomainBindings, DomainBindingsService>();
         services.AddScoped<ISubdomains, SubdomainsService>();
+        services.AddSingleton<ProviderPluginCollection>();
 
         return services;
     }

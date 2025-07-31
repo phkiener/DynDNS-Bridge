@@ -31,7 +31,7 @@ public sealed class SubdomainsTest(ISubdomains subdomains, IDomainBindings domai
     [Test]
     public async Task ThrowsException_WhenModyfingSubdomain_ThatDoesNotExistOnDomainBinding()
     {
-        await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"), "Mock");
+        await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"), MockProvider.Name);
 
         await Assert.ThrowsAsync<InvalidOperationException>(
             () => subdomains.UpdateSubdomainAsync(new DomainBindingId("example.com"), DomainFragment.From("blog"), SubdomainFlags.A));
@@ -40,7 +40,7 @@ public sealed class SubdomainsTest(ISubdomains subdomains, IDomainBindings domai
     [Test]
     public async Task AddsSubdomainToDomainBinding()
     {
-        await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"), "Mock");
+        await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"), MockProvider.Name);
         await subdomains.AddSubdomainAsync(new DomainBindingId("example.com"), DomainFragment.From("blog"));
 
         var domainBinding = await domainBindings.FindDomainBindingAsync(Hostname.From("example.com"));
@@ -52,7 +52,7 @@ public sealed class SubdomainsTest(ISubdomains subdomains, IDomainBindings domai
     [Test]
     public async Task AddingSubdomains_IsIdempotent()
     {
-        await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"), "Mock");
+        await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"), MockProvider.Name);
         await subdomains.AddSubdomainAsync(new DomainBindingId("example.com"), DomainFragment.From("blog"));
         await subdomains.AddSubdomainAsync(new DomainBindingId("example.com"), DomainFragment.From("blog"));
 
@@ -64,7 +64,7 @@ public sealed class SubdomainsTest(ISubdomains subdomains, IDomainBindings domai
     [Test]
     public async Task RemovesSubdomainFromDomainBinding()
     {
-        await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"), "Mock");
+        await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"), MockProvider.Name);
         await subdomains.AddSubdomainAsync(new DomainBindingId("example.com"), DomainFragment.From("blog"));
 
         await subdomains.RemoveSubdomainAsync(new DomainBindingId("example.com"), DomainFragment.From("blog"));
@@ -76,7 +76,7 @@ public sealed class SubdomainsTest(ISubdomains subdomains, IDomainBindings domai
     [Test]
     public async Task NothingHappens_WhenRemovingNonexistentSubdomain()
     {
-        await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"), "Mock");
+        await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"), MockProvider.Name);
 
         await subdomains.RemoveSubdomainAsync(new DomainBindingId("example.com"), DomainFragment.From("blog"));
         
@@ -87,7 +87,7 @@ public sealed class SubdomainsTest(ISubdomains subdomains, IDomainBindings domai
     [Test]
     public async Task SubdomainCanBeUpdated()
     {
-        await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"), "Mock");
+        await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"), MockProvider.Name);
         await subdomains.AddSubdomainAsync(new DomainBindingId("example.com"), DomainFragment.From("blog"));
 
         await subdomains.UpdateSubdomainAsync(
