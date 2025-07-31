@@ -1,0 +1,10 @@
+<Router AppAssembly="@MainLayout.Assembly">
+    <Found>
+        <RouteView RouteData="context" DefaultLayout="@MainLayout" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="@MainLayout">
+            <NotFoundPage />
+        </LayoutView>
+    </NotFound>
+</Router>

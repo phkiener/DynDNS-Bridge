@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <base href="/"/>
+
+    <title>DynDNS Configuration</title>
+
+    <ImportMap />
+
+    <link href="@Assets["_content/DynDNS.Web/font-roboto.css"]" rel="stylesheet" />
+    <link href="@Assets["_content/MudBlazor/MudBlazor.min.css"]" rel="stylesheet" />
+
+    <HeadOutlet @rendermode="@RenderMode.InteractiveServer" />
+</head>
+
+<body>
+    <Routes @rendermode="@RenderMode.InteractiveServer"/>
+    <script src="_framework/blazor.web.js"></script>
+    <script src="@Assets["_content/MudBlazor/MudBlazor.min.js"]"></script>
+</body>
+</html>

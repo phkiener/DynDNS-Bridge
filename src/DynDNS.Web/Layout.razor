@@ -1,0 +1,17 @@
+@inherits LayoutComponentBase
+
+<MudThemeProvider IsDarkMode />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Fixed Elevation="1">
+        <MudText Typo="Typo.h5" Class="ml-3">DynDNS Bridge</MudText>
+    </MudAppBar>
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Large" Class="pt-5">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
