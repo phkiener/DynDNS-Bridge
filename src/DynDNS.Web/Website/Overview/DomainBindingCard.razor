@@ -1,11 +1,13 @@
 @using DynDNS.Core.Abstractions.Models
+@using Microsoft.AspNetCore.Components.Forms
+@using DynDNS.Web.Validation
 @implements IDisposable
 @inject OverviewModel OverviewModel
 
 <MudCard>
     <MudCardHeader>
         <MudStack Row AlignItems="AlignItems.Center" Class="flex-auto">
-            <MudText Typo="Typo.h6" Color="Color.Primary">@DomainBinding.Hostname</MudText>
+            <MudText Typo="Typo.h6" Color="Color.Primary">@DomainBinding.Domain</MudText>
             <MudSpacer />
             <MudIconButton Icon="@Icons.Material.Filled.DeleteForever" OnClick="@(() => OverviewModel.DeleteDomainBinding(DomainBinding))" />
         </MudStack>
@@ -28,7 +30,7 @@
                 </MudItem>
 
                 <MudItem sm="2">
-                    <MudText>.@DomainBinding.Hostname</MudText>
+                    <MudText>.@DomainBinding.Domain</MudText>
                 </MudItem>
 
                 <MudItem sm="2">
@@ -46,21 +48,24 @@
                 </MudItem>
             }
 
-            @if (addModel is not null)
+            @if (addModel is not null && editContext is not null)
             {
-                <MudItem sm="2">
-                    <MudTextField Error="@addModel.NameHasErrors"
-                                  @bind-Value="@addModel.Name" @bind-Value:after="@ValidateAddModel" />
-                </MudItem>
+                <CascadingValue Value="editContext">
+                    <SwallowValidationProvider />
+                    <MudItem sm="2">
+                        <MudTextField For="@(() => addModel.Name)" @bind-Value="@addModel.Name" @bind-Value:after="@(() => editContext.Validate())"/>
+                    </MudItem>
 
-                <MudItem sm="6">
-                    <MudText>.@DomainBinding.Hostname</MudText>
-                </MudItem>
+                    <MudItem sm="6">
+                        <MudText>.@DomainBinding.Domain</MudText>
+                    </MudItem>
 
-                <MudItem sm="4" Style="text-align: end">
-                    <MudIconButton Icon="@Icons.Material.Filled.Cancel" OnClick="@CancelAddSubdomain"/>
-                    <MudIconButton Icon="@Icons.Material.Filled.Save" Disabled="@(!addModel.CanSubmit)" Color="Color.Primary" OnClick="@AddSubdomain"/>
-                </MudItem>
+                    <MudItem sm="4" Style="text-align: end">
+                        <MudIconButton Icon="@Icons.Material.Filled.Cancel" OnClick="@CancelAddSubdomain"/>
+                        <MudIconButton Icon="@Icons.Material.Filled.Save" Disabled="@(!editContext.Validate())" Color="Color.Primary" OnClick="@AddSubdomain"/>
+                    </MudItem>
+                </CascadingValue>
+
             }
         </MudGrid>
     </MudCardContent>
@@ -76,7 +81,8 @@
 @code {
 
     private List<SubdomainModel> subdomains = [];
-    private AddSubdomainModel? addModel = null;
+    private EditContext? editContext;
+    private SubdomainModel? addModel = null;
 
     [Parameter, EditorRequired]
     public required DomainBindingModel DomainBinding { get; set; }
@@ -112,17 +118,10 @@
 
     private void ShowAddSubdomain()
     {
-        addModel = new AddSubdomainModel();
-        StateHasChanged();
-    }
+        addModel = new SubdomainModel { DomainBindingId = DomainBinding.Id };
+        editContext = new EditContext(addModel);
 
-    private void ValidateAddModel()
-    {
-        if (addModel is not null)
-        {
-            addModel.NameHasErrors = !DomainFragment.TryCreate(addModel.Name, out _) || subdomains.Any(n => n.Name == addModel.Name);
-            addModel.CanSubmit = !string.IsNullOrWhiteSpace(addModel.Name) && !addModel.NameHasErrors;
-        }
+        StateHasChanged();
     }
 
     private async Task AddSubdomain()
@@ -132,7 +131,7 @@
             return;
         }
 
-        await OverviewModel.AddSubdomain(DomainBinding, addModel.Name);
+        await OverviewModel.AddSubdomain(addModel);
         addModel = null;
     }
 
@@ -146,13 +145,6 @@
     {
         OverviewModel.OnSubdomainAdded -= OnSubdomainRemoved;
         OverviewModel.OnSubdomainRemoved -= OnSubdomainRemoved;
-    }
-
-    private sealed class AddSubdomainModel
-    {
-        public string Name { get; set; } = "";
-        public bool NameHasErrors { get; set; } = false;
-        public bool CanSubmit { get; set; } = false;
     }
 
 }

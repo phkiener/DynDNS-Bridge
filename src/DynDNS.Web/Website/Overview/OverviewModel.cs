@@ -1,22 +1,38 @@
 using DynDNS.Core.Abstractions;
 using DynDNS.Core.Abstractions.Models;
+using Swallow.Validation;
+using Swallow.Validation.Assertions;
 
 namespace DynDNS.Web.Website.Overview;
 
-public sealed class DomainBindingModel
+public sealed class DomainBindingModel : IValidatable
 {
-    public required DomainBindingId Id { get; init; }
+    public DomainBindingId Id { get; init; } = default;
 
-    public string Hostname { get; set; } = "";
+    public string Domain { get; set; } = "";
+
+    public ValidationResult Validate()
+    {
+        return Validator.Check()
+            .That(Domain).IsNotEmpty().Satisfies(static s => Hostname.TryCreate(s, out _), "be a valid hostname")
+            .Result();
+    }
 }
 
-public sealed class SubdomainModel
+public sealed class SubdomainModel : IValidatable
 {
     public required DomainBindingId DomainBindingId { get; init; }
 
     public string Name { get; set; } = "";
     public bool BindIPv4 { get; set; } = false;
     public bool BindIPv6 { get; set; } = false;
+
+    public ValidationResult Validate()
+    {
+        return Validator.Check()
+            .That(Name).IsNotEmpty().Satisfies(static s => DomainFragment.TryCreate(s, out _), "be a valid domain fragment")
+            .Result();
+    }
 }
 
 public sealed class OverviewModel(IDomainBindings domainBindings, ISubdomains subdomains)
@@ -42,7 +58,7 @@ public sealed class OverviewModel(IDomainBindings domainBindings, ISubdomains su
                 var model = new DomainBindingModel
                 {
                     Id = domainBinding.Id,
-                    Hostname = domainBinding.Domain
+                    Domain = domainBinding.Domain
                 };
 
                 bindingModels.Add(model);
@@ -65,14 +81,12 @@ public sealed class OverviewModel(IDomainBindings domainBindings, ISubdomains su
         }
     }
 
-    public async Task AddSubdomain(DomainBindingModel domainBinding, string subdomain)
+    public async Task AddSubdomain(SubdomainModel subdomain)
     {
-        await subdomains.AddSubdomainAsync(domainBinding.Id, DomainFragment.From(subdomain));
+        await subdomains.AddSubdomainAsync(subdomain.DomainBindingId, DomainFragment.From(subdomain.Name));
+        subdomainModels.Add(subdomain);
 
-        var subdomainModel = new SubdomainModel { DomainBindingId = domainBinding.Id, Name = subdomain };
-        subdomainModels.Add(subdomainModel);
-
-        OnSubdomainAdded?.Invoke(this, subdomainModel);
+        OnSubdomainAdded?.Invoke(this, subdomain);
     }
 
     public async Task UpdateSubdomain(SubdomainModel subdomain)
@@ -92,11 +106,10 @@ public sealed class OverviewModel(IDomainBindings domainBindings, ISubdomains su
         OnSubdomainRemoved?.Invoke(this, subdomain);
     }
 
-    public async Task AddDomainBinding(string hostname)
+    public async Task AddDomainBinding(DomainBindingModel model)
     {
-        var id = await domainBindings.CreateDomainBindingAsync(Hostname.From(hostname));
-
-        var model = new DomainBindingModel { Id = id, Hostname = hostname };
+        var id = await domainBindings.CreateDomainBindingAsync(Hostname.From(model.Domain));
+        model = new DomainBindingModel { Id = id, Domain = model.Domain };
         bindingModels.Add(model);
 
         OnDomainBindingAdded?.Invoke(this, model);

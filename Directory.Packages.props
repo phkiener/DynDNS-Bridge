@@ -12,6 +12,7 @@
     <PackageVersion Include="MudBlazor" Version="8.10.0" />
     <PackageVersion Include="Swallow.Blazor.AdvancedStyleIsolation" Version="1.0.0" />
     <PackageVersion Include="Swallow.Blazor.StaticAssetPaths" Version="1.0.0" />
+    <PackageVersion Include="Swallow.Validation" Version="8.0.0" />
     <PackageVersion Include="TUnit" Version="0.25.21" />
   </ItemGroup>
 </Project>

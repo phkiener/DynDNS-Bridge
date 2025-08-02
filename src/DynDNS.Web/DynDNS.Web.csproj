@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="MudBlazor" />
+    <PackageReference Include="Swallow.Validation" />
   </ItemGroup>
 
   <ItemGroup>
