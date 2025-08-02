@@ -4,6 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,6 +13,19 @@
 
   <ItemGroup>
     <PackageReference Include="MudBlazor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DynDNS.Core.Abstractions\DynDNS.Core.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\DomainBindingCard.razor" />
+    <UpToDateCheckInput Remove="Pages\Index.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="Website\StatusCodePages\NotFoundPage.razor" />
   </ItemGroup>
 
 </Project>

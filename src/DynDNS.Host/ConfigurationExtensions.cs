@@ -1,9 +1,12 @@
 namespace DynDNS.Host;
 
-internal static class ConfigurationExtensions
+public static class ConfigurationExtensions
 {
-    public static bool UseTransient(this IConfiguration configuration)
+    public static void When(this IConfiguration configuration, string key, Action action)
     {
-        return configuration["DYNDNS_TRANSIENT"] is not null;
+        if (configuration[key] is not null)
+        {
+            action.Invoke();
+        }
     }
 }

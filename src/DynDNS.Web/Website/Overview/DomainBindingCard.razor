@@ -1,0 +1,158 @@
+@using DynDNS.Core.Abstractions.Models
+@implements IDisposable
+@inject OverviewModel OverviewModel
+
+<MudCard>
+    <MudCardHeader>
+        <MudStack Row AlignItems="AlignItems.Center" Class="flex-auto">
+            <MudText Typo="Typo.h6" Color="Color.Primary">@DomainBinding.Hostname</MudText>
+            <MudSpacer />
+            <MudIconButton Icon="@Icons.Material.Filled.DeleteForever" OnClick="@(() => OverviewModel.DeleteDomainBinding(DomainBinding))" />
+        </MudStack>
+    </MudCardHeader>
+
+    <MudCardContent>
+        <MudDivider DividerType="DividerType.Middle" Class="my-4" />
+        <MudGrid Spacing="0" Class="align-center">
+            @if (!subdomains.Any() && addModel is null)
+            {
+                <MudItem sm="12">
+                    <MudText Align="Align.Center">No subdomains configured.</MudText>
+                </MudItem>
+            }
+
+            @foreach (var subdomain in subdomains)
+            {
+                <MudItem sm="2" Style="text-align: end">
+                    <MudText Color="Color.Primary">@subdomain.Name</MudText>
+                </MudItem>
+
+                <MudItem sm="2">
+                    <MudText>.@DomainBinding.Hostname</MudText>
+                </MudItem>
+
+                <MudItem sm="2">
+                    <MudSwitch Color="Color.Primary" Label="Bind IPv4"
+                               @bind-Value="@subdomain.BindIPv4" @bind-Value:after="@(() => OverviewModel.UpdateSubdomain(subdomain))"/>
+                </MudItem>
+
+                <MudItem sm="2">
+                    <MudSwitch Color="Color.Primary" Label="Bind IPv6"
+                               @bind-Value="@subdomain.BindIPv6" @bind-Value:after="@(() => OverviewModel.UpdateSubdomain(subdomain))"/>
+                </MudItem>
+
+                <MudItem sm="4" Style="text-align: end">
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@(() => OverviewModel.RemoveSubdomain(subdomain))"/>
+                </MudItem>
+            }
+
+            @if (addModel is not null)
+            {
+                <MudItem sm="2">
+                    <MudTextField Error="@addModel.NameHasErrors"
+                                  @bind-Value="@addModel.Name" @bind-Value:after="@ValidateAddModel" />
+                </MudItem>
+
+                <MudItem sm="6">
+                    <MudText>.@DomainBinding.Hostname</MudText>
+                </MudItem>
+
+                <MudItem sm="4" Style="text-align: end">
+                    <MudIconButton Icon="@Icons.Material.Filled.Cancel" OnClick="@CancelAddSubdomain"/>
+                    <MudIconButton Icon="@Icons.Material.Filled.Save" Disabled="@(!addModel.CanSubmit)" Color="Color.Primary" OnClick="@AddSubdomain"/>
+                </MudItem>
+            }
+        </MudGrid>
+    </MudCardContent>
+    <MudCardActions>
+        <MudStack Row AlignItems="AlignItems.Center">
+            <MudButton Color="Color.Primary" Disabled="@(addModel is not null)" OnClick="@ShowAddSubdomain">
+                Add subdomain
+            </MudButton>
+        </MudStack>
+    </MudCardActions>
+</MudCard>
+
+@code {
+
+    private List<SubdomainModel> subdomains = [];
+    private AddSubdomainModel? addModel = null;
+
+    [Parameter, EditorRequired]
+    public required DomainBindingModel DomainBinding { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        subdomains = OverviewModel.Subdomains.Where(s => s.DomainBindingId == DomainBinding.Id).ToList();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            OverviewModel.OnSubdomainAdded += OnSubdomainAdded;
+            OverviewModel.OnSubdomainRemoved += OnSubdomainRemoved;
+        }
+    }
+
+    private void OnSubdomainAdded(object? sender, SubdomainModel e)
+    {
+        if (e.DomainBindingId == DomainBinding.Id)
+        {
+            subdomains.Add(e);
+            _ = InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void OnSubdomainRemoved(object? sender, SubdomainModel e)
+    {
+        subdomains.Remove(e);
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private void ShowAddSubdomain()
+    {
+        addModel = new AddSubdomainModel();
+        StateHasChanged();
+    }
+
+    private void ValidateAddModel()
+    {
+        if (addModel is not null)
+        {
+            addModel.NameHasErrors = !DomainFragment.TryCreate(addModel.Name, out _) || subdomains.Any(n => n.Name == addModel.Name);
+            addModel.CanSubmit = !string.IsNullOrWhiteSpace(addModel.Name) && !addModel.NameHasErrors;
+        }
+    }
+
+    private async Task AddSubdomain()
+    {
+        if (addModel is null)
+        {
+            return;
+        }
+
+        await OverviewModel.AddSubdomain(DomainBinding, addModel.Name);
+        addModel = null;
+    }
+
+    private void CancelAddSubdomain()
+    {
+        addModel = null;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        OverviewModel.OnSubdomainAdded -= OnSubdomainRemoved;
+        OverviewModel.OnSubdomainRemoved -= OnSubdomainRemoved;
+    }
+
+    private sealed class AddSubdomainModel
+    {
+        public string Name { get; set; } = "";
+        public bool NameHasErrors { get; set; } = false;
+        public bool CanSubmit { get; set; } = false;
+    }
+
+}

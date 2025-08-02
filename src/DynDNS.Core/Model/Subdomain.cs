@@ -11,7 +11,7 @@ namespace DynDNS.Core.Model;
 public sealed class Subdomain(DomainFragment name, bool createIPv4Record = false, bool createIPv6Record = false)
 {
     /// <summary>
-    /// 
+    /// Name of this subdomain.
     /// </summary>
     public DomainFragment Name { get; } = name;
 
@@ -19,12 +19,12 @@ public sealed class Subdomain(DomainFragment name, bool createIPv4Record = false
     /// Whether to create a DNS entry for IPv4 routing.
     /// </summary>
     public bool CreateIPv4Record { get; private set; } = createIPv4Record;
-    
+
     /// <summary>
     /// Whether to create a DNS entry for IPv6 routing.
     /// </summary>
     public bool CreateIPv6Record { get; private set; } = createIPv6Record;
-    
+
     /// <summary>
     /// Apply the given flags to the subdomain, modifying its configuration.
     /// </summary>

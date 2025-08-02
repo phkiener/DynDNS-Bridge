@@ -1,0 +1,112 @@
+@page "/"
+@using DynDNS.Core.Abstractions.Models
+@implements IDisposable
+@inject OverviewModel OverviewModel
+
+<MudStack>
+    @foreach (var domainBinding in domainBindings)
+    {
+        <DomainBindingCard DomainBinding="domainBinding" />
+    }
+
+    @if (addModel is not null)
+    {
+        <MudCard>
+            <MudCardHeader>
+                <MudStack Row AlignItems="AlignItems.Center" Class="flex-auto">
+                    <MudTextField Label="Domain" Error="@addModel.NameHasErrors"
+                                  @bind-Value="@addModel.Name" @bind-Value:after="@ValidateAddModel" />
+                    <MudSpacer />
+                    <MudIconButton Icon="@Icons.Material.Filled.Cancel" OnClick="@CancelAddDomainBinding" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Save" Disabled="@(!addModel.CanSubmit)" Color="Color.Primary" OnClick="@AddDomainBinding" />
+                </MudStack>
+            </MudCardHeader>
+        </MudCard>
+    }
+    else
+    {
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="@ShowAddDomainBinding" Class="align-self-start">
+            Add domain
+        </MudButton>
+    }
+</MudStack>
+
+@code {
+
+    private List<DomainBindingModel> domainBindings = [];
+    private AddDomainBindingModel? addModel = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await OverviewModel.InitializeAsync();
+
+        domainBindings = OverviewModel.DomainBindings.ToList();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            OverviewModel.OnDomainBindingAdded += OnDomainBindingAdded;
+            OverviewModel.OnDomainBindingRemoved += OnDomainBindingRemoved;
+        }
+    }
+
+    private void OnDomainBindingRemoved(object? sender, DomainBindingModel model)
+    {
+        domainBindings.Remove(model);
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private void OnDomainBindingAdded(object? sender, DomainBindingModel model)
+    {
+        domainBindings.Add(model);
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private void ShowAddDomainBinding()
+    {
+        addModel = new AddDomainBindingModel();
+        StateHasChanged();
+    }
+
+    private void ValidateAddModel()
+    {
+        if (addModel is not null)
+        {
+            addModel.NameHasErrors = !Hostname.TryCreate(addModel.Name, out _) || domainBindings.Any(n => n.Hostname == addModel.Name);
+            addModel.CanSubmit = !string.IsNullOrWhiteSpace(addModel.Name) && !addModel.NameHasErrors;
+        }
+    }
+
+    private async Task AddDomainBinding()
+    {
+        if (addModel is null)
+        {
+            return;
+        }
+
+        await OverviewModel.AddDomainBinding(addModel.Name);
+        addModel = null;
+    }
+
+    private void CancelAddDomainBinding()
+    {
+        addModel = null;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        OverviewModel.OnDomainBindingAdded -= OnDomainBindingAdded;
+        OverviewModel.OnDomainBindingRemoved -= OnDomainBindingRemoved;
+    }
+
+    private sealed class AddDomainBindingModel
+    {
+        public string Name { get; set; } = "";
+        public bool NameHasErrors { get; set; } = false;
+        public bool CanSubmit { get; set; } = false;
+    }
+
+}

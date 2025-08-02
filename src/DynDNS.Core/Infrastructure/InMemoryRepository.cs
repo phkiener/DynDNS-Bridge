@@ -1,12 +1,23 @@
 using DynDNS.Core.Abstractions.Models;
+using DynDNS.Core.Model;
 using DomainBinding = DynDNS.Core.Model.DomainBinding;
 
 namespace DynDNS.Core.Infrastructure;
 
 internal sealed class InMemoryRepository : IDomainBindingRepository
 {
-    private readonly List<DomainBinding> bindings = [];
-    
+    private readonly List<DomainBinding> bindings =
+    [
+        new(
+            id: new DomainBindingId("phkiener.ch"),
+            hostname: Hostname.From("phkiener.ch"),
+            subdomains:
+            [
+                new Subdomain(DomainFragment.From("vpn")),
+                new Subdomain(DomainFragment.From("jellyfin"))
+            ])
+    ];
+
     public Task AddAsync(DomainBinding domainBinding)
     {
         bindings.Add(domainBinding);

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace DynDNS.Core.Abstractions.Models;
@@ -11,32 +12,46 @@ namespace DynDNS.Core.Abstractions.Models;
 public sealed partial record DomainFragment
 {
     private readonly string value;
-    
+
     private DomainFragment(string value)
     {
         this.value = value;
     }
-    
+
     /// <inheritdoc />
     public override string ToString() => value;
 
     public static implicit operator string(DomainFragment id) => id.value;
-    
+
     /// <summary>
     /// Create a new <see cref="DomainFragment"/>.
     /// </summary>
+    /// <param name="value">The text to parse.</param>
     public static DomainFragment From(string value)
+    {
+        return TryCreate(value, out var result) ? result : throw new ArgumentException($"'{value}' is not a valid domain fragment.", nameof(value));
+    }
+
+    /// <summary>
+    /// Try to create a new <see cref="DomainFragment"/>.
+    /// </summary>
+    /// <param name="value">The text to parse.</param>
+    /// <param name="result">The created <see cref="DomainFragment"/> - or null.</param>
+    /// <returns><c>true</c> if the domain fragment was created, <c>false</c> otherwise.</returns>
+    public static bool TryCreate(string value, [NotNullWhen(true)] out DomainFragment? result)
     {
         if (!IsValid(value))
         {
-            throw new ArgumentException($"'{value}' is not a valid domain fragment.", nameof(value));
+            result = null;
+            return false;
         }
-        
-        return new DomainFragment(value);
+
+        result = new DomainFragment(value);
+        return true;
     }
-    
+
     private static bool IsValid(string value) => DomainFragmentRegex().IsMatch(value);
-    
+
     /// <summary>
     /// A regular expression to match a hostname, though not perfectly. Length of the label is
     /// not validated.<br/>
@@ -48,6 +63,8 @@ public sealed partial record DomainFragment
     ///     with-hyphen ::= no-hyphen | '-' ;
     ///     </code>
     /// </summary>
-    [GeneratedRegex(@"^([a-z0-9]|[a-z0-9][-a-z0-9]*[a-z0-9])(\.([a-z0-9]|[a-z0-9][-a-z0-9]*[a-z0-9]))*$", RegexOptions.IgnoreCase)]
+    [GeneratedRegex(
+        @"^([a-z0-9]|[a-z0-9][-a-z0-9]*[a-z0-9])(\.([a-z0-9]|[a-z0-9][-a-z0-9]*[a-z0-9]))*$",
+        RegexOptions.IgnoreCase)]
     private static partial Regex DomainFragmentRegex();
 }

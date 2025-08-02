@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace DynDNS.Core.Abstractions.Models;
@@ -12,7 +13,7 @@ namespace DynDNS.Core.Abstractions.Models;
 public sealed partial record Hostname
 {
     private readonly string value;
-    
+
     private Hostname(string value)
     {
         this.value = value;
@@ -27,7 +28,7 @@ public sealed partial record Hostname
     /// <code>
     ///     var host = Hostname.From("example.com");
     ///     var subdomain = DomainFragment.From("blog.me");
-    /// 
+    ///
     ///     host.BuildUrl(subdomain);
     /// </code>
     ///
@@ -37,27 +38,41 @@ public sealed partial record Hostname
     {
         return $"{subdomain}.{value}";
     }
-    
+
     /// <inheritdoc />
     public override string ToString() => value;
 
     public static implicit operator string(Hostname id) => id.value;
-    
+
     /// <summary>
     /// Create a new <see cref="Hostname"/>.
     /// </summary>
+    /// <param name="value">The text to parse.</param>
     public static Hostname From(string value)
+    {
+        return TryCreate(value, out var result) ? result : throw new ArgumentException($"'{value}' is not a valid hostname.", nameof(value));
+    }
+
+    /// <summary>
+    /// Try to create a new <see cref="Hostname"/>.
+    /// </summary>
+    /// <param name="value">The text to parse.</param>
+    /// <param name="hostname">The created <see cref="Hostname"/> - or null.</param>
+    /// <returns><c>true</c> if the hostname was created, <c>false</c> otherwise.</returns>
+    public static bool TryCreate(string value, [NotNullWhen(true)] out Hostname? hostname)
     {
         if (!IsValid(value))
         {
-            throw new ArgumentException($"'{value}' is not a valid hostname.", nameof(value));
+            hostname = null;
+            return false;
         }
-        
-        return new Hostname(value);
+
+        hostname = new Hostname(value);
+        return true;
     }
 
     private static bool IsValid(string value) => HostnameRegex().IsMatch(value);
-    
+
     /// <summary>
     /// A regular expression to match a hostname, though not perfectly. Length of the label is
     /// not validated, neither is the validity of the TLD.<br/>
@@ -70,6 +85,9 @@ public sealed partial record Hostname
     ///     with-hyphen ::= no-hyphen | '-' ;
     ///     </code>
     /// </summary>
-    [GeneratedRegex(@"^([a-z0-9]|[a-z0-9][-a-z0-9]*[a-z0-9])\.([a-z0-9]|[a-z0-9][-a-z0-9]*[a-z0-9])$", RegexOptions.IgnoreCase)]
+    [GeneratedRegex(
+        @"^([a-z0-9]|[a-z0-9][-a-z0-9]*[a-z0-9])\.([a-z0-9]|[a-z0-9][-a-z0-9]*[a-z0-9])$",
+        RegexOptions.IgnoreCase)]
     private static partial Regex HostnameRegex();
+
 }
