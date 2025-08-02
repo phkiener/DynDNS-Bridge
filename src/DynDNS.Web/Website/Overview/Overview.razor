@@ -1,7 +1,5 @@
 @page "/"
 @using DynDNS.Core.Abstractions.Models
-@using Microsoft.AspNetCore.Components.Forms
-@using DynDNS.Web.Validation
 @implements IDisposable
 @inject OverviewModel OverviewModel
 
@@ -11,20 +9,19 @@
         <DomainBindingCard DomainBinding="domainBinding" />
     }
 
-    @if (addModel is not null && editContext is not null)
+    @if (isAdding)
     {
         <MudCard>
             <MudCardHeader>
-                <CascadingValue Value="editContext">
+                <EditForm Model="addModel" Style="display: contents" OnValidSubmit="@AddDomainBinding">
                     <SwallowValidationProvider />
                     <MudStack Row AlignItems="AlignItems.Center" Class="flex-auto">
-                        <MudTextField Label="Domain" For="@(() => addModel.Domain)"
-                                      @bind-Value="@addModel.Domain" @bind-Value:after="@(() => editContext.Validate())" />
+                        <MudTextField Label="Domain" For="@(() => addModel.Domain)" @bind-Value="@addModel.Domain"/>
                         <MudSpacer/>
                         <MudIconButton Icon="@Icons.Material.Filled.Cancel" OnClick="@CancelAddDomainBinding"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Save" Disabled="@(editContext!.Validate())" Color="Color.Primary" OnClick="@AddDomainBinding"/>
+                        <MudIconButton Icon="@Icons.Material.Filled.Save" Color="Color.Primary" ButtonType="ButtonType.Submit" />
                     </MudStack>
-                </CascadingValue>
+                </EditForm>
             </MudCardHeader>
         </MudCard>
     }
@@ -39,8 +36,8 @@
 @code {
 
     private List<DomainBindingModel> domainBindings = [];
-    private EditContext? editContext;
-    private DomainBindingModel? addModel = null;
+    private bool isAdding = false;
+    private DomainBindingModel addModel = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -73,25 +70,22 @@
     private void ShowAddDomainBinding()
     {
         addModel = new DomainBindingModel { Id = new DomainBindingId()};
-        editContext = new EditContext(addModel);
+        isAdding = true;
 
         StateHasChanged();
     }
 
     private async Task AddDomainBinding()
     {
-        if (addModel is null)
-        {
-            return;
-        }
-
         await OverviewModel.AddDomainBinding(addModel);
-        addModel = null;
+        isAdding = false;
+
+        StateHasChanged();
     }
 
     private void CancelAddDomainBinding()
     {
-        addModel = null;
+        isAdding = false;
         StateHasChanged();
     }
 

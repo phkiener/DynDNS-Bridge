@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Swallow.Validation;
 
-namespace DynDNS.Web.Validation;
+namespace DynDNS.Web.Website.Validation;
 
 public sealed class SwallowValidationProvider : ComponentBase, IDisposable
 {
@@ -18,6 +18,24 @@ public sealed class SwallowValidationProvider : ComponentBase, IDisposable
         messageStore = new ValidationMessageStore(attachedEditContext);
 
         attachedEditContext.OnValidationRequested += Validate;
+        attachedEditContext.OnFieldChanged += FieldChange;
+    }
+
+    private void FieldChange(object? sender, FieldChangedEventArgs e)
+    {
+        if (attachedEditContext?.Model is IValidatable validatable)
+        {
+            var identifier = e.FieldIdentifier;
+            messageStore?.Clear(identifier);
+
+            var result = validatable.Validate();
+            foreach (var message in result.Errors.Where(msg => msg.PropertyName == identifier.FieldName))
+            {
+                messageStore?.Add(identifier, message.Message);
+            }
+
+            attachedEditContext.NotifyValidationStateChanged();
+        }
     }
 
     private void Validate(object? sender, ValidationRequestedEventArgs e)
@@ -50,6 +68,7 @@ public sealed class SwallowValidationProvider : ComponentBase, IDisposable
         if (attachedEditContext != null)
         {
             attachedEditContext.OnValidationRequested -= Validate;
+            attachedEditContext.OnFieldChanged -= FieldChange;
         }
     }
 }

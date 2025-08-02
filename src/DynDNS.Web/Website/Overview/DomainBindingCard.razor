@@ -1,6 +1,3 @@
-@using DynDNS.Core.Abstractions.Models
-@using Microsoft.AspNetCore.Components.Forms
-@using DynDNS.Web.Validation
 @implements IDisposable
 @inject OverviewModel OverviewModel
 
@@ -16,7 +13,7 @@
     <MudCardContent>
         <MudDivider DividerType="DividerType.Middle" Class="my-4" />
         <MudGrid Spacing="0" Class="align-center">
-            @if (!subdomains.Any() && addModel is null)
+            @if (!subdomains.Any() && !isAdding)
             {
                 <MudItem sm="12">
                     <MudText Align="Align.Center">No subdomains configured.</MudText>
@@ -48,12 +45,12 @@
                 </MudItem>
             }
 
-            @if (addModel is not null && editContext is not null)
+            @if (isAdding)
             {
-                <CascadingValue Value="editContext">
+                <EditForm Model="addModel" Style="display: contents" OnValidSubmit="@AddSubdomain">
                     <SwallowValidationProvider />
                     <MudItem sm="2">
-                        <MudTextField For="@(() => addModel.Name)" @bind-Value="@addModel.Name" @bind-Value:after="@(() => editContext.Validate())"/>
+                        <MudTextField For="@(() => addModel.Name)" @bind-Value="@addModel.Name" />
                     </MudItem>
 
                     <MudItem sm="6">
@@ -62,16 +59,16 @@
 
                     <MudItem sm="4" Style="text-align: end">
                         <MudIconButton Icon="@Icons.Material.Filled.Cancel" OnClick="@CancelAddSubdomain"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Save" Disabled="@(!editContext.Validate())" Color="Color.Primary" OnClick="@AddSubdomain"/>
+                        <MudIconButton Icon="@Icons.Material.Filled.Save" Color="Color.Primary" ButtonType="ButtonType.Submit" />
                     </MudItem>
-                </CascadingValue>
+                </EditForm>
 
             }
         </MudGrid>
     </MudCardContent>
     <MudCardActions>
         <MudStack Row AlignItems="AlignItems.Center">
-            <MudButton Color="Color.Primary" Disabled="@(addModel is not null)" OnClick="@ShowAddSubdomain">
+            <MudButton Color="Color.Primary" Disabled="@isAdding" OnClick="@ShowAddSubdomain">
                 Add subdomain
             </MudButton>
         </MudStack>
@@ -81,14 +78,15 @@
 @code {
 
     private List<SubdomainModel> subdomains = [];
-    private EditContext? editContext;
-    private SubdomainModel? addModel = null;
+    private bool isAdding = false;
+    private SubdomainModel addModel = null!;
 
     [Parameter, EditorRequired]
     public required DomainBindingModel DomainBinding { get; set; }
 
     protected override void OnParametersSet()
     {
+        addModel = new SubdomainModel { DomainBindingId = DomainBinding.Id };
         subdomains = OverviewModel.Subdomains.Where(s => s.DomainBindingId == DomainBinding.Id).ToList();
     }
 
@@ -118,26 +116,21 @@
 
     private void ShowAddSubdomain()
     {
+        isAdding = true;
         addModel = new SubdomainModel { DomainBindingId = DomainBinding.Id };
-        editContext = new EditContext(addModel);
 
         StateHasChanged();
     }
 
     private async Task AddSubdomain()
     {
-        if (addModel is null)
-        {
-            return;
-        }
-
         await OverviewModel.AddSubdomain(addModel);
-        addModel = null;
+        isAdding = false;
     }
 
     private void CancelAddSubdomain()
     {
-        addModel = null;
+        isAdding = false;
         StateHasChanged();
     }
 
