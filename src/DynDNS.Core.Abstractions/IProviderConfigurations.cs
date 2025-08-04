@@ -27,4 +27,10 @@ public interface IProviderConfigurations
     /// <param name="provider">Name of the provider; see <see cref="Providers"/>.</param>
     /// <param name="parameters">The parameters to configure for the selected provider.</param>
     Task ConfigureProviderAsync(DomainBindingId id, string provider, IReadOnlyDictionary<string, string> parameters);
+
+    /// <summary>
+    /// Update the bindings for the configured provider.
+    /// </summary>
+    /// <param name="id">Id of the domain binding whose bindings to update.</param>
+    Task UpdateBindingsAsync(DomainBindingId id);
 }

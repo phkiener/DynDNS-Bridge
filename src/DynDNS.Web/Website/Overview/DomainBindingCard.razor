@@ -6,6 +6,12 @@
         <MudStack Row AlignItems="AlignItems.Center" Class="flex-auto">
             <MudText Typo="Typo.h6" Color="Color.Primary">@DomainBinding.Domain</MudText>
             <MudSpacer />
+
+            @if (providerConfiguration.Provider is not null)
+            {
+                <MudIconButton Color="Color.Primary" Icon="@Icons.Material.Filled.Upload" OnClick="@(() => OverviewModel.ApplyBinding(DomainBinding))" />
+            }
+
             <MudIconButton Icon="@Icons.Material.Filled.DeleteForever" OnClick="@(() => OverviewModel.DeleteDomainBinding(DomainBinding))" />
         </MudStack>
     </MudCardHeader>

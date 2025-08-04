@@ -13,5 +13,9 @@
   <ItemGroup>
     <ProjectReference Include="..\DynDNS.Core.Abstractions\DynDNS.Core.Abstractions.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <InternalsVisibleTo Include="DynDNS.Core.Test" />
+  </ItemGroup>
 
 </Project>

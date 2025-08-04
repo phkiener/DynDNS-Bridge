@@ -1,5 +1,6 @@
 using DynDNS.Core.Abstractions;
-using DynDNS.Core.Infrastructure;
+using DynDNS.Core.Abstractions.Plugins;
+using DynDNS.Core.Transient;
 using DynDNS.Core.UseCases;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -20,6 +21,7 @@ public static class ServiceProviderConfiguration
         services.AddScoped<IDomainBindings, DomainBindingsService>();
         services.AddScoped<ISubdomains, SubdomainsService>();
         services.AddScoped<IProviderConfigurations, ProviderConfigurationsService>();
+        services.AddScoped<ICurrentAddress, CurrentAddressService>();
 
         return services;
     }
@@ -33,13 +35,20 @@ public static class ServiceProviderConfiguration
     public static IServiceCollection UseTransientCore(this IServiceCollection services, bool useScopes = false)
     {
         services.RemoveAll<IDomainBindingRepository>();
+        services.RemoveAll<IProviderPlugin>();
+        services.RemoveAll<ICurrentAddressProvider>();
+
         if (useScopes)
         {
             services.AddScoped<IDomainBindingRepository, InMemoryRepository>();
+            services.AddScoped<IProviderPlugin, MockProviderPlugin>();
+            services.AddScoped<ICurrentAddressProvider, MockAddressProvider>();
         }
         else
         {
             services.AddSingleton<IDomainBindingRepository, InMemoryRepository>();
+            services.AddSingleton<IProviderPlugin, MockProviderPlugin>();
+            services.AddSingleton<ICurrentAddressProvider, MockAddressProvider>();
         }
 
         return services;

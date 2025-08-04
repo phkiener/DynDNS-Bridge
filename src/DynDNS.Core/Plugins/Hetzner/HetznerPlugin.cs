@@ -12,4 +12,9 @@ public sealed class HetznerPlugin : IProviderPlugin
 
     /// <inheritdoc />
     public IReadOnlyList<string> Parameters { get; } = ["ZoneId", "API Key"];
+
+    public IProviderClient GetClient(IReadOnlyDictionary<string, string> parameters)
+    {
+        throw new NotImplementedException();
+    }
 }

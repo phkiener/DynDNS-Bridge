@@ -1,11 +1,18 @@
 using DynDNS.Core.Abstractions;
 using DynDNS.Core.Abstractions.Models;
+using DynDNS.Core.Abstractions.Plugins;
 using DynDNS.Core.Test.Framework;
+using DynDNS.Core.Transient;
 
 namespace DynDNS.Core.Test.UseCases;
 
 [UseDependencyInjection]
-public sealed class ProviderConfiugrationsServiceTest(IProviderConfigurations providerConfigurations, IDomainBindings domainBindings)
+public sealed class ProviderConfiugrationsServiceTest(
+    IProviderConfigurations providerConfigurations,
+    IDomainBindings domainBindings,
+    ISubdomains subdomains,
+    IProviderPlugin plugin,
+    ICurrentAddressProvider currentAddressProvider)
 {
     [Test]
     public async Task ReturnsNamesOfRegisteredPlugins()
@@ -83,7 +90,95 @@ public sealed class ProviderConfiugrationsServiceTest(IProviderConfigurations pr
         var domainBinding = await domainBindings.FindDomainBindingAsync(Hostname.From("example.com"));
         await Assert.That(domainBinding?.ConfiguredProvider).IsNotNull();
         await Assert.That(domainBinding!.ConfiguredProvider!.Name).IsEqualTo("Mock");
-        await Assert.That(domainBinding!.ConfiguredProvider!.Parameters["Name"]).IsEqualTo("admin");
-        await Assert.That(domainBinding!.ConfiguredProvider!.Parameters["Password"]).IsEqualTo("hunter2");
+        await Assert.That(domainBinding.ConfiguredProvider.Parameters["Name"]).IsEqualTo("admin");
+        await Assert.That(domainBinding.ConfiguredProvider.Parameters["Password"]).IsEqualTo("hunter2");
+    }
+
+    [Test]
+    public async Task DoesNothing_WhenApplyingBindingWithoutSubdomains()
+    {
+        var id = await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"));
+        var parameters = new Dictionary<string, string>
+        {
+            ["Name"] = "admin",
+            ["Password"] = "hunter2"
+        };
+
+        await providerConfigurations.ConfigureProviderAsync(id, "Mock", parameters);
+        await providerConfigurations.UpdateBindingsAsync(id);
+
+        var entries = await plugin.GetClient(parameters).GetRecordsAsync();
+        await Assert.That(entries).IsEmpty();
+    }
+
+    [Test]
+    public async Task CreatesDnsRecordsForSubdomain()
+    {
+        var id = await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"));
+        var parameters = new Dictionary<string, string>
+        {
+            ["Name"] = "admin",
+            ["Password"] = "hunter2"
+        };
+
+        await providerConfigurations.ConfigureProviderAsync(id, "Mock", parameters);
+        await subdomains.AddSubdomainAsync(id, DomainFragment.From("blog"));
+        await subdomains.UpdateSubdomainAsync(id, DomainFragment.From("blog"), SubdomainFlags.A | SubdomainFlags.AAAA);
+
+        await providerConfigurations.UpdateBindingsAsync(id);
+
+        var entries = await plugin.GetClient(parameters).GetRecordsAsync();
+        await Assert.That(entries).IsEquivalentTo([
+            new DnsRecord(Hostname.From("example.com"), DomainFragment.From("blog"), DnsRecordType.A, (await currentAddressProvider.GetIPv4AddressAsync())!),
+            new DnsRecord(Hostname.From("example.com"), DomainFragment.From("blog"), DnsRecordType.AAAA, (await currentAddressProvider.GetIPv6AddressAsync())!)
+        ]);
+    }
+
+    [Test]
+    public async Task UpdatesDnsRecordsForSubdomain()
+    {
+        var id = await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"));
+        var parameters = new Dictionary<string, string>
+        {
+            ["Name"] = "admin",
+            ["Password"] = "hunter2"
+        };
+
+        await providerConfigurations.ConfigureProviderAsync(id, "Mock", parameters);
+        await subdomains.AddSubdomainAsync(id, DomainFragment.From("blog"));
+        await subdomains.UpdateSubdomainAsync(id, DomainFragment.From("blog"), SubdomainFlags.A | SubdomainFlags.AAAA);
+        await providerConfigurations.UpdateBindingsAsync(id);
+
+        (currentAddressProvider as MockAddressProvider)!.IPv4Address = "127.0.0.2";
+        (currentAddressProvider as MockAddressProvider)!.IPv6Address = "::2";
+        await providerConfigurations.UpdateBindingsAsync(id);
+
+        var entries = await plugin.GetClient(parameters).GetRecordsAsync();
+        await Assert.That(entries).IsEquivalentTo([
+            new DnsRecord(Hostname.From("example.com"), DomainFragment.From("blog"), DnsRecordType.A, "127.0.0.2"),
+            new DnsRecord(Hostname.From("example.com"), DomainFragment.From("blog"), DnsRecordType.AAAA, "::2")
+        ]);
+    }
+
+    [Test]
+    public async Task DeletesDnsRecordsForSubdomain()
+    {
+        var id = await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"));
+        var parameters = new Dictionary<string, string>
+        {
+            ["Name"] = "admin",
+            ["Password"] = "hunter2"
+        };
+
+        await providerConfigurations.ConfigureProviderAsync(id, "Mock", parameters);
+        await subdomains.AddSubdomainAsync(id, DomainFragment.From("blog"));
+        await subdomains.UpdateSubdomainAsync(id, DomainFragment.From("blog"), SubdomainFlags.A | SubdomainFlags.AAAA);
+        await providerConfigurations.UpdateBindingsAsync(id);
+
+        await subdomains.UpdateSubdomainAsync(id, DomainFragment.From("blog"), SubdomainFlags.None);
+        await providerConfigurations.UpdateBindingsAsync(id);
+
+        var entries = await plugin.GetClient(parameters).GetRecordsAsync();
+        await Assert.That(entries).IsEmpty();
     }
 }

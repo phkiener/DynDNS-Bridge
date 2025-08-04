@@ -1,7 +1,7 @@
 using DynDNS.Core.Abstractions.Models;
 using DomainBinding = DynDNS.Core.Model.DomainBinding;
 
-namespace DynDNS.Core.Infrastructure;
+namespace DynDNS.Core.Transient;
 
 internal sealed class InMemoryRepository : IDomainBindingRepository
 {

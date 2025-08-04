@@ -188,4 +188,9 @@ public sealed class OverviewModel(IDomainBindings domainBindings, ISubdomains su
             OnProviderConfigurationChanged?.Invoke(this, providerConfiguration);
         }
     }
+
+    public async Task ApplyBinding(DomainBindingModel domainBinding)
+    {
+        await providerConfigurations.UpdateBindingsAsync(domainBinding.Id);
+    }
 }
