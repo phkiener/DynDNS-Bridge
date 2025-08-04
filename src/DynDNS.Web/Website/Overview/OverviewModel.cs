@@ -35,7 +35,16 @@ public sealed class SubdomainModel : IValidatable
     }
 }
 
-public sealed class OverviewModel(IDomainBindings domainBindings, ISubdomains subdomains)
+public sealed class ProviderConfigurationModel
+{
+    public required DomainBindingId DomainBindingId { get; init; }
+
+    public string? Provider { get; set; } = null;
+    public IReadOnlyList<string> RequiredParameters { get; set; } = [];
+    public IDictionary<string, string> SuppliedParameters { get; set; } = new Dictionary<string, string>();
+}
+
+public sealed class OverviewModel(IDomainBindings domainBindings, ISubdomains subdomains, IProviderConfigurations providerConfigurations)
 {
     private bool isLoaded = false;
 
@@ -49,19 +58,30 @@ public sealed class OverviewModel(IDomainBindings domainBindings, ISubdomains su
     public event EventHandler<SubdomainModel>? OnSubdomainAdded;
     public event EventHandler<SubdomainModel>? OnSubdomainRemoved;
 
+    private readonly List<ProviderConfigurationModel> providerConfigurationModels = [];
+    public IReadOnlyList<ProviderConfigurationModel> ProviderConfigurations => providerConfigurationModels.AsReadOnly();
+    public event EventHandler<ProviderConfigurationModel>? OnProviderConfigurationChanged;
+
+    public IReadOnlyList<string> AvailableProviders => providerConfigurations.Providers.Order().ToList();
+
     public async Task InitializeAsync()
     {
         if (!isLoaded)
         {
             foreach (var domainBinding in await domainBindings.GetDomainBindingsAsync())
             {
-                var model = new DomainBindingModel
-                {
-                    Id = domainBinding.Id,
-                    Domain = domainBinding.Domain
-                };
-
+                var model = new DomainBindingModel { Id = domainBinding.Id, Domain = domainBinding.Domain };
                 bindingModels.Add(model);
+
+                var providerConfigurationModel = new ProviderConfigurationModel { DomainBindingId = domainBinding.Id };
+                if (domainBinding.ConfiguredProvider is not null)
+                {
+                    providerConfigurationModel.Provider = domainBinding.ConfiguredProvider.Name;
+                    providerConfigurationModel.RequiredParameters = providerConfigurations.GetParameters(domainBinding.ConfiguredProvider.Name);
+                    providerConfigurationModel.SuppliedParameters = new Dictionary<string, string>(domainBinding.ConfiguredProvider.Parameters);
+                }
+
+                providerConfigurationModels.Add(providerConfigurationModel);
 
                 foreach (var subdomain in domainBinding.Subdomains)
                 {
@@ -112,6 +132,9 @@ public sealed class OverviewModel(IDomainBindings domainBindings, ISubdomains su
         model = new DomainBindingModel { Id = id, Domain = model.Domain };
         bindingModels.Add(model);
 
+        var providerConfigurationModel = new ProviderConfigurationModel { DomainBindingId = model.Id };
+        providerConfigurationModels.Add(providerConfigurationModel);
+
         OnDomainBindingAdded?.Invoke(this, model);
     }
 
@@ -121,5 +144,48 @@ public sealed class OverviewModel(IDomainBindings domainBindings, ISubdomains su
         bindingModels.Remove(domainBinding);
 
         OnDomainBindingRemoved?.Invoke(this, domainBinding);
+    }
+
+    public Task UpdateForProvider(ProviderConfigurationModel providerConfiguration)
+    {
+        if (providerConfiguration.Provider is null)
+        {
+            providerConfiguration.RequiredParameters = [];
+            providerConfiguration.SuppliedParameters = new Dictionary<string, string>();
+        }
+        else
+        {
+            providerConfiguration.RequiredParameters = providerConfigurations.GetParameters(providerConfiguration.Provider);
+            providerConfiguration.SuppliedParameters = providerConfiguration.RequiredParameters.ToDictionary(
+                static key => key,
+                key => providerConfiguration.SuppliedParameters.TryGetValue(key, out var parameter) ? parameter : "");
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public async Task UpdateProviderConfiguration(ProviderConfigurationModel providerConfiguration)
+    {
+        if (providerConfiguration.Provider is null)
+        {
+            return; // We don't support deleting yet.
+        }
+
+        await providerConfigurations.ConfigureProviderAsync(
+            id: providerConfiguration.DomainBindingId,
+            provider: providerConfiguration.Provider,
+            parameters: providerConfiguration.SuppliedParameters.AsReadOnly());
+
+        var existingConfigurationIndex = providerConfigurationModels.FindIndex(c => c.DomainBindingId == providerConfiguration.DomainBindingId);
+        if (existingConfigurationIndex is -1)
+        {
+            providerConfigurationModels.Add(providerConfiguration);
+            OnProviderConfigurationChanged?.Invoke(this, providerConfiguration);
+        }
+        else
+        {
+            providerConfigurationModels[existingConfigurationIndex] = providerConfiguration;
+            OnProviderConfigurationChanged?.Invoke(this, providerConfiguration);
+        }
     }
 }

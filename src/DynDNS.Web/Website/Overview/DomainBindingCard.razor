@@ -11,7 +11,86 @@
     </MudCardHeader>
 
     <MudCardContent>
-        <MudDivider DividerType="DividerType.Middle" Class="my-4" />
+        @if (isEditingProvider)
+        {
+            var providers = OverviewModel.AvailableProviders;
+
+            <MudGrid Spacing="2" Class="align-center">
+                <MudItem sm="1">
+                    <MudText Color="Color.Primary">Provider</MudText>
+                </MudItem>
+
+                <MudItem sm="11">
+                    @if (providers is [])
+                    {
+                        <MudText>No provider available!</MudText>
+                    }
+                    else
+                    {
+                        <MudSelect @bind-Value="@editModel.Provider" @bind-Value:after="@UpdateSelectedProvider">
+                            @foreach (var provider in providers)
+                            {
+                                <MudSelectItem Value="provider">@provider</MudSelectItem>
+                            }
+                        </MudSelect>
+                    }
+                </MudItem>
+
+                @foreach (var parameter in editModel.RequiredParameters)
+                {
+                    <MudItem sm="1">
+                        <MudText Color="Color.Primary">@parameter</MudText>
+                    </MudItem>
+
+                    <MudItem sm="11">
+                        @if (editModel.SuppliedParameters.ContainsKey(parameter))
+                        {
+                            <MudTextField @bind-Value="@editModel.SuppliedParameters[parameter]" />
+                        }
+                    </MudItem>
+                }
+
+                <MudItem sm="12">
+                    <MudStack Row AlignItems="AlignItems.Center" Class="mt-4">
+                        <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@UpdateProviderConfiguration">Save</MudButton>
+                        <MudButton Variant="Variant.Text" OnClick="@CancelEditProvider">Cancel</MudButton>
+                    </MudStack>
+                </MudItem>
+            </MudGrid>
+        }
+        else if (providerConfiguration.Provider is null)
+        {
+            <MudText Inline>No provider configured.</MudText>
+            <MudIconButton Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" OnClick="@ShowEditProvider" />
+        }
+        else
+        {
+            <MudGrid Spacing="1" Class="align-center">
+                <MudItem sm="1">
+                    <MudText Color="Color.Primary">Provider</MudText>
+                </MudItem>
+
+                <MudItem sm="11">
+                    @providerConfiguration.Provider
+
+                    <MudIconButton Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" OnClick="@ShowEditProvider" />
+                </MudItem>
+
+                @foreach (var parameter in providerConfiguration.RequiredParameters)
+                {
+                    <MudItem sm="1">
+                        <MudText Color="Color.Primary">@parameter</MudText>
+                    </MudItem>
+
+                    <MudItem sm="11">
+                        @providerConfiguration.SuppliedParameters[parameter]
+                    </MudItem>
+                }
+            </MudGrid>
+        }
+
+        <MudDivider DividerType="DividerType.Middle" Class="my-4"/>
+
         <MudGrid Spacing="0" Class="align-center">
             @if (!subdomains.Any() && !isAdding)
             {
@@ -48,9 +127,9 @@
             @if (isAdding)
             {
                 <EditForm Model="addModel" Style="display: contents" OnValidSubmit="@AddSubdomain">
-                    <SwallowValidationProvider />
+                    <SwallowValidationProvider/>
                     <MudItem sm="2">
-                        <MudTextField For="@(() => addModel.Name)" @bind-Value="@addModel.Name" />
+                        <MudTextField For="@(() => addModel.Name)" @bind-Value="@addModel.Name"/>
                     </MudItem>
 
                     <MudItem sm="6">
@@ -59,7 +138,7 @@
 
                     <MudItem sm="4" Style="text-align: end">
                         <MudIconButton Icon="@Icons.Material.Filled.Cancel" OnClick="@CancelAddSubdomain"/>
-                        <MudIconButton Icon="@Icons.Material.Filled.Save" Color="Color.Primary" ButtonType="ButtonType.Submit" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Save" Color="Color.Primary" ButtonType="ButtonType.Submit"/>
                     </MudItem>
                 </EditForm>
 
@@ -78,6 +157,11 @@
 @code {
 
     private List<SubdomainModel> subdomains = [];
+    private ProviderConfigurationModel providerConfiguration = null!;
+
+    private bool isEditingProvider = false;
+    private ProviderConfigurationModel editModel = null!;
+
     private bool isAdding = false;
     private SubdomainModel addModel = null!;
 
@@ -88,6 +172,9 @@
     {
         addModel = new SubdomainModel { DomainBindingId = DomainBinding.Id };
         subdomains = OverviewModel.Subdomains.Where(s => s.DomainBindingId == DomainBinding.Id).ToList();
+
+        editModel = new ProviderConfigurationModel { DomainBindingId = DomainBinding.Id };
+        providerConfiguration = OverviewModel.ProviderConfigurations.Single(s => s.DomainBindingId == DomainBinding.Id);
     }
 
     protected override void OnAfterRender(bool firstRender)
@@ -96,6 +183,7 @@
         {
             OverviewModel.OnSubdomainAdded += OnSubdomainAdded;
             OverviewModel.OnSubdomainRemoved += OnSubdomainRemoved;
+            OverviewModel.OnProviderConfigurationChanged += OnProviderConfigurationChanged;
         }
     }
 
@@ -112,6 +200,15 @@
     {
         subdomains.Remove(e);
         _ = InvokeAsync(StateHasChanged);
+    }
+
+    private void OnProviderConfigurationChanged(object? sender, ProviderConfigurationModel e)
+    {
+        if (providerConfiguration.DomainBindingId == e.DomainBindingId)
+        {
+            providerConfiguration = e;
+            _ = InvokeAsync(StateHasChanged);
+        }
     }
 
     private void ShowAddSubdomain()
@@ -138,6 +235,40 @@
     {
         OverviewModel.OnSubdomainAdded -= OnSubdomainRemoved;
         OverviewModel.OnSubdomainRemoved -= OnSubdomainRemoved;
+        OverviewModel.OnProviderConfigurationChanged -= OnProviderConfigurationChanged;
+    }
+
+    private void ShowEditProvider()
+    {
+        isEditingProvider = true;
+        editModel = new ProviderConfigurationModel
+        {
+            DomainBindingId = providerConfiguration.DomainBindingId,
+            Provider = providerConfiguration.Provider,
+            RequiredParameters = providerConfiguration.RequiredParameters,
+            SuppliedParameters = new Dictionary<string, string>(providerConfiguration.SuppliedParameters)
+        };
+
+        StateHasChanged();
+    }
+
+    private async Task UpdateSelectedProvider()
+    {
+        await OverviewModel.UpdateForProvider(editModel);
+        StateHasChanged();
+    }
+
+    private void CancelEditProvider()
+    {
+        isEditingProvider = false;
+        StateHasChanged();
+    }
+
+    private async Task UpdateProviderConfiguration()
+    {
+        await OverviewModel.UpdateProviderConfiguration(editModel);
+        isEditingProvider = false;
+        StateHasChanged();
     }
 
 }
