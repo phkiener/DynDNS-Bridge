@@ -16,7 +16,7 @@
                 <EditForm Model="addModel" Style="display: contents" OnValidSubmit="@AddDomainBinding">
                     <SwallowValidationProvider />
                     <MudStack Row AlignItems="AlignItems.Center" Class="flex-auto">
-                        <MudTextField Label="Domain" For="@(() => addModel.Domain)" @bind-Value="@addModel.Domain"/>
+                        <MudTextField Label="Domain" For="@(() => addModel.Domain)" @bind-Value="@addModel.Domain" AutoFocus />
                         <MudSpacer/>
                         <MudIconButton Icon="@Icons.Material.Filled.Cancel" OnClick="@CancelAddDomainBinding"/>
                         <MudIconButton Icon="@Icons.Material.Filled.Save" Color="Color.Primary" ButtonType="ButtonType.Submit" />

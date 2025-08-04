@@ -9,7 +9,12 @@
 
             @if (providerConfiguration.Provider is not null)
             {
-                <MudIconButton Color="Color.Primary" Icon="@Icons.Material.Filled.Upload" OnClick="@(() => OverviewModel.ApplyBinding(DomainBinding))" />
+                @if (isProcessingBinding)
+                {
+                    <MudText>Updating...</MudText>
+                }
+
+                <MudIconButton Color="Color.Primary" Icon="@Icons.Material.Filled.Upload" Disabled="@isProcessingBinding" OnClick="@UpdateBinding" />
             }
 
             <MudIconButton Icon="@Icons.Material.Filled.DeleteForever" OnClick="@(() => OverviewModel.DeleteDomainBinding(DomainBinding))" />
@@ -33,7 +38,7 @@
                     }
                     else
                     {
-                        <MudSelect @bind-Value="@editModel.Provider" @bind-Value:after="@UpdateSelectedProvider">
+                        <MudSelect @bind-Value="@editModel.Provider" @bind-Value:after="@UpdateSelectedProvider" AutoFocus>
                             @foreach (var provider in providers)
                             {
                                 <MudSelectItem Value="provider">@provider</MudSelectItem>
@@ -135,7 +140,7 @@
                 <EditForm Model="addModel" Style="display: contents" OnValidSubmit="@AddSubdomain">
                     <SwallowValidationProvider/>
                     <MudItem sm="2">
-                        <MudTextField For="@(() => addModel.Name)" @bind-Value="@addModel.Name"/>
+                        <MudTextField For="@(() => addModel.Name)" @bind-Value="@addModel.Name" AutoFocus />
                     </MudItem>
 
                     <MudItem sm="6">
@@ -170,6 +175,8 @@
 
     private bool isAdding = false;
     private SubdomainModel addModel = null!;
+
+    private bool isProcessingBinding = false;
 
     [Parameter, EditorRequired]
     public required DomainBindingModel DomainBinding { get; set; }
@@ -274,6 +281,17 @@
     {
         await OverviewModel.UpdateProviderConfiguration(editModel);
         isEditingProvider = false;
+        StateHasChanged();
+    }
+
+    private async Task UpdateBinding()
+    {
+        isProcessingBinding = true;
+        StateHasChanged();
+
+        await OverviewModel.ApplyBinding(DomainBinding);
+
+        isProcessingBinding = false;
         StateHasChanged();
     }
 
