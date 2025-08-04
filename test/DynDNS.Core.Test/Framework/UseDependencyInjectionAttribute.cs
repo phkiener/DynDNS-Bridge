@@ -1,3 +1,4 @@
+using DynDNS.Core.Abstractions.Plugins;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DynDNS.Core.Test.Framework;
@@ -7,6 +8,7 @@ public sealed class UseDependencyInjectionAttribute : DependencyInjectionDataSou
     private static readonly IServiceProvider SharedServiceProvider = new ServiceCollection()
         .AddCoreServices()
         .UseTransientCore(useScopes: true)
+        .AddSingleton<IProviderPlugin, MockProviderPlugin>()
         .BuildServiceProvider();
 
     public override IServiceScope CreateScope(DataGeneratorMetadata dataGeneratorMetadata)

@@ -1,4 +1,5 @@
 using DynDNS.Core.Abstractions.Models;
+using DynDNS.Core.Abstractions.Plugins;
 
 namespace DynDNS.Core.Model;
 
@@ -11,7 +12,8 @@ namespace DynDNS.Core.Model;
 public sealed class DomainBinding(
     DomainBindingId id,
     Hostname hostname,
-    IReadOnlyCollection<Subdomain> subdomains)
+    IReadOnlyCollection<Subdomain> subdomains,
+    ProviderConfiguration? providerConfiguration)
 {
     private readonly Dictionary<DomainFragment, Subdomain> subdomains = subdomains.ToDictionary(static s => s.Name, static s => s);
 
@@ -23,7 +25,8 @@ public sealed class DomainBinding(
         : this(
             id: new DomainBindingId(hostname),
             hostname: hostname,
-            subdomains: [])
+            subdomains: [],
+            providerConfiguration: null)
     {
 
     }
@@ -42,6 +45,11 @@ public sealed class DomainBinding(
     /// All <see cref="Subdomain"/>s to configure on the domain.
     /// </summary>
     public IReadOnlyList<Subdomain> Subdomains => subdomains.Values.ToList().AsReadOnly();
+
+    /// <summary>
+    /// The configured provider for this domain binding, if any.
+    /// </summary>
+    public ProviderConfiguration? ProviderConfiguration { get; private set; } = providerConfiguration;
 
     /// <summary>
     /// Add a new subdomain to this binding.
@@ -75,5 +83,15 @@ public sealed class DomainBinding(
     public void RemoveSubdomain(DomainFragment name)
     {
         subdomains.Remove(name);
+    }
+
+    /// <summary>
+    /// Configure a <see cref="IProviderPlugin"/> for this domain binding.
+    /// </summary>
+    /// <param name="name">Name of the provider.</param>
+    /// <param name="parameters">The parameters to set for the <see cref="ProviderConfiguration"/>.</param>
+    public void ConfigureProvider(string name, IReadOnlyDictionary<string, string> parameters)
+    {
+        ProviderConfiguration = new ProviderConfiguration(name, parameters);
     }
 }

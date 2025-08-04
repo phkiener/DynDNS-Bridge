@@ -54,8 +54,11 @@ public sealed class DomainBindingsService(IDomainBindingRepository repository) :
     private static DomainBinding MapBinding(Model.DomainBinding entity)
     {
         var subdomains = entity.Subdomains.Select(MapSubdomain).ToArray();
+        var providerConfiugration = entity.ProviderConfiguration is null
+            ? null
+            : new DomainBinding.Provider(entity.ProviderConfiguration.Name, entity.ProviderConfiguration.Parameters);
 
-        return new DomainBinding(entity.Id, entity.Hostname, subdomains);
+        return new DomainBinding(entity.Id, entity.Hostname, subdomains, providerConfiugration);
 
         static DomainBinding.Subdomain MapSubdomain(Model.Subdomain entity)
         {
