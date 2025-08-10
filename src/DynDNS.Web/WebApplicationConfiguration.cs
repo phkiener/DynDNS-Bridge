@@ -1,3 +1,4 @@
+using DynDNS.Web.Api;
 using DynDNS.Web.Website;
 using Microsoft.AspNetCore.Builder;
 
@@ -9,6 +10,7 @@ public static class WebApplicationConfiguration
     {
         application.MapStaticAssets();
         application.UseStatusCodePagesWithReExecute("/status/{0}");
+        application.MapGet("api/v1/refresh", RefreshEntriesEndpoint.HandleAsync);
         application.MapRazorComponents<App>()
             .AddInteractiveServerRenderMode()
             .DisableAntiforgery();
