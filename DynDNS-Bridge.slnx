@@ -15,23 +15,11 @@
   <Folder Name="/Additional Items/Workflows/">
     <File Path=".github/workflows/publish-container.yaml" />
   </Folder>
-  <Folder Name="/V0/">
-    <Project Path="src/DynDNS-Bridge/DynDNS-Bridge.csproj" />
-  </Folder>
-  <Folder Name="/V1/">
-    <Project Path="src/DynDNS/DynDNS.csproj" />
-  </Folder>
-  <Folder Name="/V1/Providers/">
-    <Project Path="src/DynDNS-Bridge.Providers.Hetzner/DynDNS-Bridge.Providers.Hetzner.csproj" />
-    <Project Path="src/DynDNS-Bridge.Providers/DynDNS-Bridge.Providers.csproj" />
-  </Folder>
-  <Folder Name="/V2/">
-    <Project Path="src/DynDNS.Host/DynDNS.Host.csproj" />
-    <Project Path="src/DynDNS.Web/DynDNS.Web.csproj" />
-  </Folder>
-  <Folder Name="/V2/Core/">
+  <Folder Name="/Core/">
     <Project Path="src/DynDNS.Core.Abstractions/DynDNS.Core.Abstractions.csproj" />
     <Project Path="src/DynDNS.Core/DynDNS.Core.csproj" />
     <Project Path="test/DynDNS.Core.Test/DynDNS.Core.Test.csproj" />
   </Folder>
+  <Project Path="src/DynDNS.Host/DynDNS.Host.csproj" />
+  <Project Path="src/DynDNS.Web/DynDNS.Web.csproj" />
 </Solution>

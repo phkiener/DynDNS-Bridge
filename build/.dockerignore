@@ -12,3 +12,6 @@
 *.user
 *.*~
 .DS_Store
+
+# Locally stored files
+domain-bindings.json

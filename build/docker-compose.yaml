@@ -1,13 +1,8 @@
 services:
   dyndns-bridge:
     container_name: 'dyndns-bridge'
-    image: 'ghcr.io/phkiener/hetzner-dyndns:0.1.0'
+    image: 'ghcr.io/phkiener/dyndns-bridge:0.2.0'
     restart: unless-stopped
     network_mode: host
     environment:
-      # Instead of listening on every address, consider listening only on a specific address
-      - DOTNET_URLS=http://*:9910
-  
-      # Define your API key and the domains you want to configure
-      # - DDNSBRIDGE_APIKEY=<your api key>
-      # - DDNSBRIDGE_DOMAINS=foo.example.com;bar.example.com
+      - DOTNET_URLS=http://*:9910 # Instead of listening on every address, consider listening only on a specific address
