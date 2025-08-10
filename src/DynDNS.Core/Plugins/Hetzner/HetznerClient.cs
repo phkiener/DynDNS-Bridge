@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using DynDNS.Core.Abstractions.Models;
@@ -8,10 +7,6 @@ namespace DynDNS.Core.Plugins.Hetzner;
 
 internal sealed class HetznerClient(HttpClient client, string zoneId, string apiKey) : IProviderClient
 {
-    private sealed record DnsRecordKey(string ZoneId, string Name, string Type);
-
-    private static readonly ConcurrentDictionary<DnsRecordKey, string> recordIdByKey = new();
-
     public async Task CreateRecordAsync(Hostname hostname, DomainFragment subdomain, DnsRecordType type, string ipAddress)
     {
         var request = new Models.CreateRecordRequest(zoneId, type.ToString(), subdomain, ipAddress);
@@ -38,20 +33,16 @@ internal sealed class HetznerClient(HttpClient client, string zoneId, string api
 
     private async Task<string?> GetRecordIdAsync(DomainFragment subdomain, DnsRecordType type)
     {
-        var recordKey = new DnsRecordKey(zoneId, subdomain, type.ToString());
-        if (recordIdByKey.TryGetValue(recordKey, out var value))
-        {
-            return value;
-        }
-
         var records = await SendJsonAsync<Models.GetRecordsResponse>(HttpMethod.Get, $"records?zone_id={zoneId}");
         foreach (var record in records?.Records ?? [])
         {
-            var key = new DnsRecordKey(zoneId, record.Name, record.Type);
-            recordIdByKey[key] = record.Id;
+            if (record.Name == subdomain && record.Type == type.ToString())
+            {
+                return record.Id;
+            }
         }
 
-        return recordIdByKey.GetValueOrDefault(recordKey);
+        return null;
     }
 
     private async Task SendJsonAsync(HttpMethod method, string route, object? body = null)
