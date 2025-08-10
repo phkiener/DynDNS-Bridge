@@ -15,6 +15,8 @@ public static class ServiceProviderConfiguration
     public static IServiceCollection AddHetznerPlugin(this IServiceCollection services)
     {
         services.AddSingleton<IProviderPlugin, HetznerPlugin>();
+        services.AddHttpClient(nameof(HetznerClient), static c => c.BaseAddress = new Uri("https://dns.hetzner.com/api/v1/"));
+
         return services;
     }
 }

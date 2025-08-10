@@ -5,7 +5,7 @@ namespace DynDNS.Core.Plugins.Hetzner;
 /// <summary>
 /// A <see cref="IProviderPlugin"/> for the Hetzner DNS console.
 /// </summary>
-public sealed class HetznerPlugin : IProviderPlugin
+public sealed class HetznerPlugin(IHttpClientFactory httpClientFactory) : IProviderPlugin
 {
     /// <inheritdoc />
     public string Name => "Hetzner";
@@ -15,6 +15,7 @@ public sealed class HetznerPlugin : IProviderPlugin
 
     public IProviderClient GetClient(IReadOnlyDictionary<string, string> parameters)
     {
-        throw new NotImplementedException();
+        var httpClient = httpClientFactory.CreateClient(nameof(HetznerClient));
+        return new HetznerClient(httpClient, parameters["ZoneId"], parameters["API Key"]);
     }
 }

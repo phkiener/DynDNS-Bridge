@@ -3,6 +3,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="Flurl.Http" Version="4.0.2" />
     <PackageVersion Include="Microsoft.AspNetCore.Components" Version="9.0.7" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="9.0.6" />
     <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="17.14.8" />
