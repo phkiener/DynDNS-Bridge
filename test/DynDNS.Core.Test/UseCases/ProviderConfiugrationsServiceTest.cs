@@ -107,8 +107,8 @@ public sealed class ProviderConfiugrationsServiceTest(
         await providerConfigurations.ConfigureProviderAsync(id, "Mock", parameters);
         await providerConfigurations.UpdateBindingsAsync(id);
 
-        var entries = await plugin.GetClient(parameters).GetRecordsAsync();
-        await Assert.That(entries).IsEmpty();
+        var client = plugin.GetClient(parameters) as MockProviderPlugin;
+        await Assert.That(client!.Records).IsEmpty();
     }
 
     [Test]
@@ -127,10 +127,10 @@ public sealed class ProviderConfiugrationsServiceTest(
 
         await providerConfigurations.UpdateBindingsAsync(id);
 
-        var entries = await plugin.GetClient(parameters).GetRecordsAsync();
-        await Assert.That(entries).IsEquivalentTo([
-            new DnsRecord(Hostname.From("example.com"), DomainFragment.From("blog"), DnsRecordType.A, (await currentAddressProvider.GetIPv4AddressAsync())!),
-            new DnsRecord(Hostname.From("example.com"), DomainFragment.From("blog"), DnsRecordType.AAAA, (await currentAddressProvider.GetIPv6AddressAsync())!)
+        var client = plugin.GetClient(parameters) as MockProviderPlugin;
+        await Assert.That(client!.Records).IsEquivalentTo([
+            new MockProviderPlugin.DnsRecord(Hostname.From("example.com"), DomainFragment.From("blog"), DnsRecordType.A, (await currentAddressProvider.GetIPv4AddressAsync())!),
+            new MockProviderPlugin.DnsRecord(Hostname.From("example.com"), DomainFragment.From("blog"), DnsRecordType.AAAA, (await currentAddressProvider.GetIPv6AddressAsync())!)
         ]);
     }
 
@@ -153,10 +153,10 @@ public sealed class ProviderConfiugrationsServiceTest(
         (currentAddressProvider as MockAddressProvider)!.IPv6Address = "::2";
         await providerConfigurations.UpdateBindingsAsync(id);
 
-        var entries = await plugin.GetClient(parameters).GetRecordsAsync();
-        await Assert.That(entries).IsEquivalentTo([
-            new DnsRecord(Hostname.From("example.com"), DomainFragment.From("blog"), DnsRecordType.A, "127.0.0.2"),
-            new DnsRecord(Hostname.From("example.com"), DomainFragment.From("blog"), DnsRecordType.AAAA, "::2")
+        var client = plugin.GetClient(parameters) as MockProviderPlugin;
+        await Assert.That(client!.Records).IsEquivalentTo([
+            new MockProviderPlugin.DnsRecord(Hostname.From("example.com"), DomainFragment.From("blog"), DnsRecordType.A, "127.0.0.2"),
+            new MockProviderPlugin.DnsRecord(Hostname.From("example.com"), DomainFragment.From("blog"), DnsRecordType.AAAA, "::2")
         ]);
     }
 
@@ -178,7 +178,7 @@ public sealed class ProviderConfiugrationsServiceTest(
         await subdomains.UpdateSubdomainAsync(id, DomainFragment.From("blog"), SubdomainFlags.None);
         await providerConfigurations.UpdateBindingsAsync(id);
 
-        var entries = await plugin.GetClient(parameters).GetRecordsAsync();
-        await Assert.That(entries).IsEmpty();
+        var client = plugin.GetClient(parameters) as MockProviderPlugin;
+        await Assert.That(client!.Records).IsEmpty();
     }
 }

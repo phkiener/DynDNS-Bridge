@@ -67,29 +67,26 @@ public sealed class ProviderConfigurationsService(
         }
 
         var client = plugin.GetClient(domainBinding.ProviderConfiguration.Parameters);
-        var existingRecords = await client.GetRecordsAsync();
 
         var ipv4Address = await currentAddressProvider.GetIPv4AddressAsync();
         var ipv6Address = await currentAddressProvider.GetIPv6AddressAsync();
 
         foreach (var subdomain in domainBinding.Subdomains)
         {
-            var ipv4 = existingRecords.SingleOrDefault(r => r.Hostname == domainBinding.Hostname && r.Subdomain == subdomain.Name && r.Type is DnsRecordType.A);
             if (subdomain.CreateIPv4Record && ipv4Address is not null)
             {
                 await client.CreateRecordAsync(domainBinding.Hostname, subdomain.Name, DnsRecordType.A, ipv4Address);
             }
-            else if (ipv4 is not null && !subdomain.CreateIPv4Record)
+            else if (!subdomain.CreateIPv4Record)
             {
                 await client.DeleteRecordAsync(domainBinding.Hostname, subdomain.Name, DnsRecordType.A);
             }
 
-            var ipv6 = existingRecords.SingleOrDefault(r => r.Hostname == domainBinding.Hostname && r.Subdomain == subdomain.Name && r.Type is DnsRecordType.AAAA);
             if (subdomain.CreateIPv6Record && ipv6Address is not null)
             {
                 await client.CreateRecordAsync(domainBinding.Hostname, subdomain.Name, DnsRecordType.AAAA, ipv6Address);
             }
-            else if (ipv6 is not null && !subdomain.CreateIPv6Record)
+            else if (!subdomain.CreateIPv6Record)
             {
                 await client.DeleteRecordAsync(domainBinding.Hostname, subdomain.Name, DnsRecordType.AAAA);
             }

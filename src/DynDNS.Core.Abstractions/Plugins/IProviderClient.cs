@@ -19,26 +19,11 @@ public enum DnsRecordType
 }
 
 /// <summary>
-/// A DNS record.
-/// </summary>
-/// <param name="Hostname">Which domain this record belongs to.</param>
-/// <param name="Subdomain">Which subdomain is configured for the domain.</param>
-/// <param name="Type">The type of DNS record.</param>
-/// <param name="TargetAddress">The IP address the record is pointing at.</param>
-public sealed record DnsRecord(Hostname Hostname, DomainFragment Subdomain, DnsRecordType Type, string TargetAddress);
-
-/// <summary>
 /// A client to adjust DNS records for a provider.
 /// </summary>
 /// <seealso cref="IProviderPlugin"/>
 public interface IProviderClient
 {
-    /// <summary>
-    /// List all currently configured records.
-    /// </summary>
-    /// <returns>A list of all found DNS records of supported <see cref="DnsRecordType"/>s.</returns>
-    Task<IReadOnlyCollection<DnsRecord>> GetRecordsAsync();
-
     /// <summary>
     /// Update (or create) a specific record.
     /// </summary>
