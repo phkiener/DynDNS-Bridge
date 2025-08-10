@@ -1,11 +1,18 @@
 using DynDNS.Core.Abstractions;
 using DynDNS.Core.Abstractions.Models;
+using DynDNS.Core.Abstractions.Plugins;
 using DynDNS.Core.Test.Framework;
+using DynDNS.Core.Transient;
 
 namespace DynDNS.Core.Test.UseCases;
 
 [UseDependencyInjection]
-public sealed class SubdomainsTest(ISubdomains subdomains, IDomainBindings domainBindings)
+public sealed class SubdomainsTest(
+    ISubdomains subdomains,
+    IDomainBindings domainBindings,
+    IProviderConfigurations providerConfigurations,
+    IProviderPlugin plugin,
+    ICurrentAddressProvider currentAddressProvider)
 {
     [Test]
     public async Task ThrowsException_WhenAddingSubdomain_ToNonexistentDomainBinding()
@@ -97,5 +104,27 @@ public sealed class SubdomainsTest(ISubdomains subdomains, IDomainBindings domai
 
         var domainBinding = await domainBindings.FindDomainBindingAsync(Hostname.From("example.com"));
         await Assert.That(domainBinding!.Subdomains.Single().Flags).IsEqualTo(SubdomainFlags.A | SubdomainFlags.AAAA);
+    }
+
+    [Test]
+    public async Task DnsEntriesAreRemoved_WhenSubdomainIsRemoved()
+    {
+        await domainBindings.CreateDomainBindingAsync(Hostname.From("example.com"));
+        await subdomains.AddSubdomainAsync(new DomainBindingId("example.com"), DomainFragment.From("blog"));
+        await subdomains.UpdateSubdomainAsync(new DomainBindingId("example.com"), DomainFragment.From("blog"), SubdomainFlags.A);
+        await subdomains.AddSubdomainAsync(new DomainBindingId("example.com"), DomainFragment.From("public"));
+        await subdomains.UpdateSubdomainAsync(new DomainBindingId("example.com"), DomainFragment.From("public"), SubdomainFlags.A);
+        await providerConfigurations.ConfigureProviderAsync(
+            new DomainBindingId("example.com"),
+            "Mock",
+            new Dictionary<string, string> { ["Name"] = "admin", ["Password"] = "hunter2" });
+
+        await providerConfigurations.UpdateBindingsAsync(new DomainBindingId("example.com"));
+        await subdomains.RemoveSubdomainAsync(new DomainBindingId("example.com"),  DomainFragment.From("blog"));
+
+        var client = plugin.GetClient(new Dictionary<string, string> { ["Name"] = "admin", ["Password"] = "hunter2" }) as MockProviderPlugin;
+        await Assert.That(client!.Records).IsEquivalentTo([
+            new MockProviderPlugin.DnsRecord(Hostname.From("example.com"), DomainFragment.From("blog"), DnsRecordType.A, (await currentAddressProvider.GetIPv4AddressAsync())!),
+        ]);
     }
 }
