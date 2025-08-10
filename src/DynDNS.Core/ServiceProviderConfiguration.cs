@@ -1,5 +1,6 @@
 using DynDNS.Core.Abstractions;
 using DynDNS.Core.Abstractions.Plugins;
+using DynDNS.Core.Infrastructure;
 using DynDNS.Core.Transient;
 using DynDNS.Core.UseCases;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,9 @@ public static class ServiceProviderConfiguration
         services.AddScoped<ISubdomains, SubdomainsService>();
         services.AddScoped<IProviderConfigurations, ProviderConfigurationsService>();
         services.AddScoped<ICurrentAddress, CurrentAddressService>();
+
+        services.AddTransient<IDomainBindingRepository, DomainBindingRepository>();
+        services.AddTransient<ICurrentAddressProvider, CurrentAddressProvider>();
 
         return services;
     }

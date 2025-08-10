@@ -60,7 +60,6 @@ internal sealed class HetznerClient(HttpClient client, string zoneId, string api
         if (body is not null)
         {
             request.Content = JsonContent.Create(body);
-            request.Headers.Add("Content-Type", "application/json");
         }
 
         request.Headers.Add("Accept", "application/json");
@@ -75,7 +74,6 @@ internal sealed class HetznerClient(HttpClient client, string zoneId, string api
         if (body is not null)
         {
             request.Content = JsonContent.Create(body);
-            request.Headers.Add("Content-Type", "application/json");
         }
 
         request.Headers.Add("Accept", "application/json");

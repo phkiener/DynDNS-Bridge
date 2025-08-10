@@ -45,6 +45,7 @@ public sealed class ProviderConfigurationsService(
         }
 
         domainBinding.ConfigureProvider(provider, parameters);
+        await repository.UpdateAsync(domainBinding);
     }
 
     /// <inheritdoc />
