@@ -1,4 +1,8 @@
+@using DynDNS.Core.Abstractions
 @inherits LayoutComponentBase
+@implements IDisposable
+@inject IProviderConfigurations ProviderConfigurations
+@inject ICurrentAddress CurrentAddress
 
 <MudThemeProvider IsDarkMode />
 <MudPopoverProvider />
@@ -8,6 +12,29 @@
 <MudLayout>
     <MudAppBar Fixed Elevation="1">
         <MudText Typo="Typo.h5" Class="ml-3">DynDNS Bridge</MudText>
+
+        <MudSpacer />
+
+        <MudButton Variant="Variant.Text" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Upload" Disabled="@isProcessingBinding" OnClick="@UpdateBindings">
+            Update all bindings
+        </MudButton>
+
+        <MudButton Variant="Variant.Text" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Refresh" OnClick="@RefreshAddress">
+            Refresh addresses
+        </MudButton>
+
+        <MudSpacer />
+
+        <MudStack Spacing="0">
+            <span>
+                <MudText Color="Color.Primary" Inline>IPv4:&nbsp;</MudText>
+                <MudText Inline Style="font-family: monospace">@(CurrentAddress.IPv4Address ?? "none")</MudText>
+            </span>
+            <span>
+                <MudText Color="Color.Primary" Inline>IPv6:&nbsp;</MudText>
+                <MudText Inline Style="font-family: monospace">@(CurrentAddress.IPv6Address ?? "none")</MudText>
+            </span>
+        </MudStack>
     </MudAppBar>
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.Large" Class="pt-5">
@@ -15,3 +42,42 @@
         </MudContainer>
     </MudMainContent>
 </MudLayout>
+
+@code {
+
+    private bool isProcessingBinding = false;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            CurrentAddress.AddressChanged += OnAddressChanged;
+        }
+    }
+
+    private async Task UpdateBindings()
+    {
+        isProcessingBinding = true;
+        StateHasChanged();
+
+        await ProviderConfigurations.UpdateAllBindingsAsync(CancellationToken.None);
+
+        isProcessingBinding = false;
+        StateHasChanged();
+    }
+
+    private async Task RefreshAddress()
+    {
+        await CurrentAddress.RefreshAsync();
+    }
+
+    private void OnAddressChanged(object? sender, EventArgs e)
+    {
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        CurrentAddress.AddressChanged -= OnAddressChanged;
+    }
+}

@@ -16,6 +16,11 @@ public sealed class CurrentAddressService(ICurrentAddressProvider currentAddress
     public async Task RefreshAsync()
     {
         IPv4Address = await currentAddressProvider.GetIPv4AddressAsync();
-        IPv6Address = await currentAddressProvider.GetIPv4AddressAsync();
+        IPv6Address = await currentAddressProvider.GetIPv6AddressAsync();
+
+        AddressChanged?.Invoke(this, EventArgs.Empty);
     }
+
+    /// <inheritdoc />
+    public event EventHandler? AddressChanged;
 }

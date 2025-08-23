@@ -22,7 +22,7 @@ public static class ServiceProviderConfiguration
         services.AddScoped<IDomainBindings, DomainBindingsService>();
         services.AddScoped<ISubdomains, SubdomainsService>();
         services.AddScoped<IProviderConfigurations, ProviderConfigurationsService>();
-        services.AddScoped<ICurrentAddress, CurrentAddressService>();
+        services.AddSingleton<ICurrentAddress, CurrentAddressService>();
 
         services.AddTransient<IDomainBindingRepository, DomainBindingRepository>();
         services.AddTransient<ICurrentAddressProvider, CurrentAddressProvider>();

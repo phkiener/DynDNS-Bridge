@@ -19,4 +19,11 @@ public interface ICurrentAddress
     /// Refresh the public IP addresses.
     /// </summary>
     Task RefreshAsync();
+
+    /// <summary>
+    /// Event that is emitted when the IP addresses have been refreshed. They
+    /// may be the same as before!
+    /// </summary>
+    public event EventHandler AddressChanged;
+
 }
