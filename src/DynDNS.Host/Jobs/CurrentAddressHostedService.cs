@@ -11,6 +11,8 @@ public sealed class CurrentAddressHostedService(
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
         await RefreshCurrentAddressAsync();
+
+        logger.LogInformation("Scheduling refresh of local IP addresses");
         await base.StartAsync(cancellationToken);
     }
 

@@ -12,6 +12,8 @@ public sealed class ScheduledBindingUpdater(
     public override async Task StartAsync(CancellationToken cancellationToken)
     {
         await UpdateBindingsAsync(cancellationToken);
+
+        logger.LogInformation("Scheduling update of all bindings");
         await base.StartAsync(cancellationToken);
     }
 
