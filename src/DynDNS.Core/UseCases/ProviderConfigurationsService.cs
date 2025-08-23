@@ -1,6 +1,7 @@
 using DynDNS.Core.Abstractions;
 using DynDNS.Core.Abstractions.Models;
 using DynDNS.Core.Abstractions.Plugins;
+using DomainBinding = DynDNS.Core.Model.DomainBinding;
 
 namespace DynDNS.Core.UseCases;
 
@@ -57,9 +58,35 @@ public sealed class ProviderConfigurationsService(
             throw new InvalidOperationException($"DomainBinding {id} does not exist.");
         }
 
+        var ipv4Address = await currentAddressProvider.GetIPv4AddressAsync();
+        var ipv6Address = await currentAddressProvider.GetIPv6AddressAsync();
+
+        await UpdateBindingAsync(domainBinding, ipv4Address, ipv6Address);
+    }
+
+    public async Task UpdateAllBindingsAsync(CancellationToken cancellationToken)
+    {
+        var ipv4Address = await currentAddressProvider.GetIPv4AddressAsync();
+        var ipv6Address = await currentAddressProvider.GetIPv6AddressAsync();
+
+        var domainBindings = await repository.GetAllAsync();
+        foreach (var binding in domainBindings)
+        {
+            if (binding.ProviderConfiguration is null)
+            {
+                continue;
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+            await UpdateBindingAsync(binding, ipv4Address, ipv6Address);
+        }
+    }
+
+    private async Task UpdateBindingAsync(DomainBinding domainBinding, string? ipv4Address, string? ipv6Address)
+    {
         if (domainBinding.ProviderConfiguration is null)
         {
-            throw new InvalidOperationException($"No provider is configured for {id}.");
+            throw new InvalidOperationException($"No provider is configured for {domainBinding.Id}.");
         }
 
         if (!plugins.TryGetValue(domainBinding.ProviderConfiguration.Name, out var plugin))
@@ -68,10 +95,6 @@ public sealed class ProviderConfigurationsService(
         }
 
         var client = plugin.GetClient(domainBinding.ProviderConfiguration.Parameters);
-
-        var ipv4Address = await currentAddressProvider.GetIPv4AddressAsync();
-        var ipv6Address = await currentAddressProvider.GetIPv6AddressAsync();
-
         foreach (var subdomain in domainBinding.Subdomains)
         {
             if (subdomain.CreateIPv4Record && ipv4Address is not null)

@@ -33,4 +33,10 @@ public interface IProviderConfigurations
     /// </summary>
     /// <param name="id">Id of the domain binding whose bindings to update.</param>
     Task UpdateBindingsAsync(DomainBindingId id);
+
+    /// <summary>
+    /// Update <em>all</em> configured bindings.
+    /// </summary>
+    /// <param name="cancellationToken">A cancellation token to abort the operation.</param>
+    Task UpdateAllBindingsAsync(CancellationToken cancellationToken);
 }

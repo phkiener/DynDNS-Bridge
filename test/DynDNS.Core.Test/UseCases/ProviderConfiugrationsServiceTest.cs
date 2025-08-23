@@ -181,4 +181,33 @@ public sealed class ProviderConfiugrationsServiceTest(
         var client = plugin.GetClient(parameters) as MockProviderPlugin;
         await Assert.That(client!.Records).IsEmpty();
     }
+
+    [Test]
+    public async Task UpdatesAllConfiguredBindings_SkippingThoseWithoutConfiguration()
+    {
+        var parameters = new Dictionary<string, string> { ["Name"] = "admin", ["Password"] = "hunter2" };
+
+        var first = await domainBindings.CreateDomainBindingAsync(Hostname.From("first.com"));
+        await providerConfigurations.ConfigureProviderAsync(first, "Mock", parameters);
+        await subdomains.AddSubdomainAsync(first, DomainFragment.From("blog"));
+        await subdomains.UpdateSubdomainAsync(first, DomainFragment.From("blog"), SubdomainFlags.A);
+
+        var second = await domainBindings.CreateDomainBindingAsync(Hostname.From("second.com"));
+        await subdomains.AddSubdomainAsync(second, DomainFragment.From("blog"));
+        await subdomains.UpdateSubdomainAsync(second, DomainFragment.From("blog"), SubdomainFlags.A);
+
+        var third = await domainBindings.CreateDomainBindingAsync(Hostname.From("third.com"));
+        await providerConfigurations.ConfigureProviderAsync(third, "Mock", parameters);
+
+        await providerConfigurations.UpdateAllBindingsAsync(CancellationToken.None);
+
+        var expectedRecord = new MockProviderPlugin.DnsRecord(
+            Hostname.From("first.com"),
+            DomainFragment.From("blog"),
+            DnsRecordType.A,
+            (await currentAddressProvider.GetIPv4AddressAsync())!);
+
+        var client = plugin.GetClient(parameters) as MockProviderPlugin;
+        await Assert.That(client!.Records).IsEquivalentTo([expectedRecord]);
+    }
 }
