@@ -16,9 +16,9 @@ public sealed class CurrentAddressProvider(IHttpClientFactory httpClientFactory,
         }
         catch (Exception e)
         {
-            if (e.InnerException is SocketException { SocketErrorCode: SocketError.HostUnreachable })
+            if (e.InnerException is SocketException { SocketErrorCode: SocketError.HostUnreachable or SocketError.NetworkUnreachable })
             {
-                return null; // If we get Host Unreachable, that means IPv4 is not available at all. So just skip it.
+                return null; // Expected error codes when IPv4 is unavailable, don't log anything
             }
 
             logger.LogError(e, "Failed to get IPv4 address.");
@@ -37,9 +37,9 @@ public sealed class CurrentAddressProvider(IHttpClientFactory httpClientFactory,
         }
         catch (Exception e)
         {
-            if (e.InnerException is SocketException { SocketErrorCode: SocketError.HostUnreachable })
+            if (e.InnerException is SocketException { SocketErrorCode: SocketError.HostUnreachable or SocketError.NetworkUnreachable })
             {
-                return null; // If we get Host Unreachable, that means IPv6 is not available at all. So just skip it.
+                return null; // Expected error codes when IPv6 is unavailable, don't log anything
             }
 
             logger.LogError(e, "Failed to get IPv6 address.");
