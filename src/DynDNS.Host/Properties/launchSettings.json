@@ -8,6 +8,14 @@
         "DYNDNS_TRANSIENT": "1"
       }
     },
+    "Run - Transient with Schedule": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DYNDNS_TRANSIENT": "1",
+        "DYNDNS_SCHEDULE": "5"
+      }
+    },
     "Run - Prod": {
       "commandName": "Project",
       "environmentVariables": {

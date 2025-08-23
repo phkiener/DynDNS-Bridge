@@ -2,7 +2,7 @@ using DynDNS.Core.Abstractions;
 
 namespace DynDNS.Host.Jobs;
 
-public class ScheduledBindingUpdater(IConfiguration configuration, IServiceProvider serviceProvider) : BackgroundService
+public sealed class ScheduledBindingUpdater(IConfiguration configuration, IServiceProvider serviceProvider) : BackgroundService
 {
     private PeriodicTimer? timer;
 
