@@ -1,11 +1,12 @@
 using DynDNS.Core.Abstractions.Plugins;
+using Microsoft.Extensions.Logging;
 
 namespace DynDNS.Core.Plugins.Hetzner;
 
 /// <summary>
 /// A <see cref="IProviderPlugin"/> for the Hetzner DNS console.
 /// </summary>
-public sealed class HetznerPlugin(IHttpClientFactory httpClientFactory) : IProviderPlugin
+public sealed class HetznerPlugin(IHttpClientFactory httpClientFactory, ILogger<HetznerPlugin> logger) : IProviderPlugin
 {
     /// <inheritdoc />
     public string Name => "Hetzner";
@@ -16,6 +17,6 @@ public sealed class HetznerPlugin(IHttpClientFactory httpClientFactory) : IProvi
     public IProviderClient GetClient(IReadOnlyDictionary<string, string> parameters)
     {
         var httpClient = httpClientFactory.CreateClient(nameof(HetznerClient));
-        return new HetznerClient(httpClient, parameters["ZoneId"], parameters["API Key"]);
+        return new HetznerClient(httpClient, parameters["ZoneId"], parameters["API Key"], logger);
     }
 }

@@ -2,7 +2,7 @@ using DynDNS.Core.Abstractions;
 
 namespace DynDNS.Host.Jobs;
 
-public sealed class CurrentAddressHostedService(IServiceProvider serviceProvider) : BackgroundService
+public sealed class CurrentAddressHostedService(ILogger<CurrentAddressHostedService> logger, IServiceProvider serviceProvider) : BackgroundService
 {
     private PeriodicTimer? timer;
 
@@ -19,6 +19,8 @@ public sealed class CurrentAddressHostedService(IServiceProvider serviceProvider
         while (!stoppingToken.IsCancellationRequested)
         {
             await timer.WaitForNextTickAsync(stoppingToken);
+
+            logger.LogInformation("Refreshing local IP addresses");
             await RefreshCurrentAddressAsync();
         }
     }

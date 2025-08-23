@@ -2,10 +2,11 @@ using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using DynDNS.Core.Abstractions.Models;
 using DynDNS.Core.Abstractions.Plugins;
+using Microsoft.Extensions.Logging;
 
 namespace DynDNS.Core.Plugins.Hetzner;
 
-internal sealed class HetznerClient(HttpClient client, string zoneId, string apiKey) : IProviderClient
+internal sealed class HetznerClient(HttpClient client, string zoneId, string apiKey, ILogger logger) : IProviderClient
 {
     public async Task CreateRecordAsync(Hostname hostname, DomainFragment subdomain, DnsRecordType type, string ipAddress)
     {
@@ -14,10 +15,12 @@ internal sealed class HetznerClient(HttpClient client, string zoneId, string api
         var currentRecord = await GetRecordIdAsync(subdomain, type);
         if (currentRecord is null)
         {
+            logger.LogInformation("Creating {Type} record for {Subdomain}.{Hostname} as {Value}", type.ToString(), subdomain, hostname, ipAddress);
             await SendJsonAsync(HttpMethod.Post, "records", request);
         }
         else if (currentRecord.CurrentValue != ipAddress)
         {
+            logger.LogInformation("Updating {Type} record for {Subdomain}.{Hostname} from {OldValue} to {Value}", type.ToString(), subdomain, hostname, currentRecord.CurrentValue, ipAddress);
             await SendJsonAsync(HttpMethod.Put, $"records/{currentRecord}", request);
         }
     }
@@ -27,6 +30,7 @@ internal sealed class HetznerClient(HttpClient client, string zoneId, string api
         var recordId = await GetRecordIdAsync(subdomain, type);
         if (recordId is not null)
         {
+            logger.LogInformation("Deleting {Type} record for {Subdomain}.{Hostname}", type.ToString(), subdomain, hostname);
             await SendJsonAsync(HttpMethod.Delete, $"records/{recordId}");
         }
     }

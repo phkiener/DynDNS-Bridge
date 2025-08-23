@@ -2,7 +2,10 @@ using DynDNS.Core.Abstractions;
 
 namespace DynDNS.Host.Jobs;
 
-public sealed class ScheduledBindingUpdater(IConfiguration configuration, IServiceProvider serviceProvider) : BackgroundService
+public sealed class ScheduledBindingUpdater(
+    IConfiguration configuration,
+    ILogger<ScheduledBindingUpdater> logger,
+    IServiceProvider serviceProvider) : BackgroundService
 {
     private PeriodicTimer? timer;
 
@@ -20,6 +23,8 @@ public sealed class ScheduledBindingUpdater(IConfiguration configuration, IServi
         while (!stoppingToken.IsCancellationRequested)
         {
             await timer.WaitForNextTickAsync(stoppingToken);
+
+            logger.LogInformation("Running scheduled update on all bindings");
             await UpdateBindingsAsync(stoppingToken);
         }
     }
