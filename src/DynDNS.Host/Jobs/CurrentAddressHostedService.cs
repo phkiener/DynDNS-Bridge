@@ -2,7 +2,9 @@ using DynDNS.Core.Abstractions;
 
 namespace DynDNS.Host.Jobs;
 
-public sealed class CurrentAddressHostedService(ILogger<CurrentAddressHostedService> logger, IServiceProvider serviceProvider) : BackgroundService
+public sealed class CurrentAddressHostedService(
+    ILogger<CurrentAddressHostedService> logger,
+    IServiceProvider serviceProvider) : BackgroundService
 {
     private PeriodicTimer? timer;
 
