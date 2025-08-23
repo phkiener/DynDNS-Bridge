@@ -64,6 +64,7 @@ public sealed class ProviderConfigurationsService(
         await UpdateBindingAsync(domainBinding, ipv4Address, ipv6Address);
     }
 
+    /// <inheritdoc />
     public async Task UpdateAllBindingsAsync(CancellationToken cancellationToken)
     {
         var ipv4Address = await currentAddressProvider.GetIPv4AddressAsync();

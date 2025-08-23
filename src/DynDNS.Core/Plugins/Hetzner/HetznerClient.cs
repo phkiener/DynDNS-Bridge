@@ -11,14 +11,14 @@ internal sealed class HetznerClient(HttpClient client, string zoneId, string api
     {
         var request = new Models.CreateRecordRequest(zoneId, type.ToString(), subdomain, ipAddress);
 
-        var recordId = await GetRecordIdAsync(subdomain, type);
-        if (recordId is null)
+        var currentRecord = await GetRecordIdAsync(subdomain, type);
+        if (currentRecord is null)
         {
             await SendJsonAsync(HttpMethod.Post, "records", request);
         }
-        else
+        else if (currentRecord.CurrentValue != ipAddress)
         {
-            await SendJsonAsync(HttpMethod.Put, $"records/{recordId}", request);
+            await SendJsonAsync(HttpMethod.Put, $"records/{currentRecord}", request);
         }
     }
 
@@ -31,14 +31,14 @@ internal sealed class HetznerClient(HttpClient client, string zoneId, string api
         }
     }
 
-    private async Task<string?> GetRecordIdAsync(DomainFragment subdomain, DnsRecordType type)
+    private async Task<FoundRecord?> GetRecordIdAsync(DomainFragment subdomain, DnsRecordType type)
     {
         var records = await SendJsonAsync<Models.GetRecordsResponse>(HttpMethod.Get, $"records?zone_id={zoneId}");
         foreach (var record in records?.Records ?? [])
         {
             if (record.Name == subdomain && record.Type == type.ToString())
             {
-                return record.Id;
+                return new FoundRecord(record.Id, record.Value);
             }
         }
 
@@ -73,6 +73,8 @@ internal sealed class HetznerClient(HttpClient client, string zoneId, string api
         var response = await client.SendAsync(request);
         return await response.Content.ReadFromJsonAsync<TOut>();
     }
+
+    private sealed record FoundRecord(string Id, string CurrentValue);
 
     private static class Models
     {

@@ -1,7 +1,7 @@
 # A self-hosted DynDNS provider
 
-Configure your dynamic DNS entries and have your router update them automatically when your public IP address changes -
-no account required! Just you and your trusty, little server.
+Configure your dynamic DNS entries and update them automatically - no account required!
+Just you and your trusty, little server.
 
 ![Screenshot](./docs/screenshot.png)
 
@@ -21,7 +21,7 @@ In your router, head to the DynDNS configuration and enter the following:
 
 - Provider: custom
 - Update URL: `http://<your-ip>:<your-port>/api/v1/refresh`
-- Domain: Not used, just enter whatever
+- Domain (or Hostname): Not used, just enter whatever
 - Username: Not used, just enter whatever
 - Password: Not used, just enter whatever
 
@@ -29,6 +29,17 @@ Then, head to `http://<your-ip>:<your-port>/` in your browser and configure your
 
 That's it! If done correctly, it should all just work right away. You can press the "upload" icon next to the "delete" icon
 to force-refresh the binding on your provider or wait until the DynDNS module of your router kicks in and triggers the update.
+
+### Automatic schedule
+
+You can also set an automatic schedule if your router does not have a DynDNS module. Or.. if you just prefer doing it
+this way.
+
+To enable the schedule, start the webhost with the environment variable `DYNDNS_SCHEDULE` set to the number of minutes
+between the scheduled updates. We recommend 15 minutes, but you might want to adjust this based on the TTL for the
+DNS records on your provider.
+
+That's it, basically. You can skip setting up your router if you enable the automatic schedule.
 
 ## Notes
 

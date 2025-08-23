@@ -1,11 +1,15 @@
 services:
   dyndns-bridge:
     container_name: 'dyndns-bridge'
-    image: 'ghcr.io/phkiener/dyndns-bridge:0.2.2'
+    image: 'ghcr.io/phkiener/dyndns-bridge:0.4.0'
     restart: unless-stopped
     network_mode: host
     volumes:
       - ./config:/etc/dyndns-bridge/config
     environment:
-      - DOTNET_URLS=http://*:9910 # Instead of listening on every address, consider listening only on a specific address
-      - DYNDNS_STORAGE=/etc/dyndns-bridge/config # To have persistent storage for the container
+      # Instead of listening on every address, consider listening only on a specific address
+      - DOTNET_URLS=http://*:9910
+      # To have persistent storage for the container; you can remove this to not have the config in a mounted directory
+      - DYNDNS_STORAGE=/etc/dyndns-bridge/config
+      # Uncomment this to enable the automatic schedule with an interval of 15 minutes
+      # - DYNDNS_SCHEDULE=15

@@ -1,6 +1,6 @@
 using DynDNS.Core.Abstractions;
 
-namespace DynDNS.Host;
+namespace DynDNS.Host.Jobs;
 
 public sealed class CurrentAddressHostedService(IServiceProvider serviceProvider) : BackgroundService
 {
