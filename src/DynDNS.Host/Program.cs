@@ -5,6 +5,7 @@ using DynDNS.Host.Jobs;
 using DynDNS.Web;
 
 var builder = WebApplication.CreateBuilder();
+builder.Logging.AddSimpleConsole(static c => c.TimestampFormat = "[HH:mm:ss] ");
 builder.Services.AddWebServices();
 builder.Services.AddCoreServices();
 builder.Services.AddHetznerPlugin();
