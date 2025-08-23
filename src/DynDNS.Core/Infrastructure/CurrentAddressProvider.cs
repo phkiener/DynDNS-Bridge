@@ -1,3 +1,4 @@
+using System.Net.Sockets;
 using Microsoft.Extensions.Logging;
 
 namespace DynDNS.Core.Infrastructure;
@@ -15,7 +16,12 @@ public sealed class CurrentAddressProvider(IHttpClientFactory httpClientFactory,
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Failed to get IPv6 address.");
+            if (e.InnerException is SocketException { SocketErrorCode: SocketError.HostUnreachable })
+            {
+                return null; // If we get Host Unreachable, that means IPv4 is not available at all. So just skip it.
+            }
+
+            logger.LogError(e, "Failed to get IPv4 address.");
             return null;
         }
     }
@@ -31,6 +37,11 @@ public sealed class CurrentAddressProvider(IHttpClientFactory httpClientFactory,
         }
         catch (Exception e)
         {
+            if (e.InnerException is SocketException { SocketErrorCode: SocketError.HostUnreachable })
+            {
+                return null; // If we get Host Unreachable, that means IPv6 is not available at all. So just skip it.
+            }
+
             logger.LogError(e, "Failed to get IPv6 address.");
             return null;
         }
