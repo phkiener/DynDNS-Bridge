@@ -3,17 +3,11 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Flurl.Http" Version="4.0.2" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components" Version="9.0.7" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="9.0.6" />
-    <PackageVersion Include="Microsoft.Build.Utilities.Core" Version="17.14.8" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.7" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
-    <PackageVersion Include="Microsoft.Extensions.Http" Version="9.0.7" />
-    <PackageVersion Include="MudBlazor" Version="8.10.0" />
-    <PackageVersion Include="Swallow.Blazor.AdvancedStyleIsolation" Version="1.0.0" />
-    <PackageVersion Include="Swallow.Blazor.StaticAssetPaths" Version="1.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.0" />
+    <PackageVersion Include="MudBlazor" Version="8.14.0" />
     <PackageVersion Include="Swallow.Validation" Version="8.0.0" />
-    <PackageVersion Include="TUnit" Version="0.25.21" />
+    <PackageVersion Include="TUnit" Version="1.2.0" />
   </ItemGroup>
 </Project>

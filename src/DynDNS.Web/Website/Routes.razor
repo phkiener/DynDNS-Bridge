@@ -1,12 +1,7 @@
-<Router AppAssembly="@MainLayout.Assembly">
+<Router AppAssembly="@MainLayout.Assembly" NotFoundPage="@typeof(NotFoundPage)">
     <Found>
         <RouteView RouteData="context" DefaultLayout="@MainLayout" />
     </Found>
-    <NotFound>
-        <LayoutView Layout="@MainLayout">
-            <NotFoundPage />
-        </LayoutView>
-    </NotFound>
 </Router>
 
 @code {
