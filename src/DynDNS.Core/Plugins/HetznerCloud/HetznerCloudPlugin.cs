@@ -12,13 +12,13 @@ public sealed class HetznerCloudPlugin(IHttpClientFactory httpClientFactory, ILo
     public string Name => "Hetzner Cloud";
 
     /// <inheritdoc />
-    public IReadOnlyList<string> Parameters { get; } = ["Label", "API Key"];
+    public IReadOnlyList<string> Parameters { get; } = ["API Key"];
 
     public IProviderClient GetClient(IReadOnlyDictionary<string, string> parameters)
     {
         var httpClient = httpClientFactory.CreateClient(nameof(HetznerCloudClient));
         httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {parameters["ApiKey"]}");
 
-        return new HetznerCloudClient(httpClient, parameters["Label"], logger);
+        return new HetznerCloudClient(httpClient, logger);
     }
 }
