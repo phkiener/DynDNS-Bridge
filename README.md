@@ -7,9 +7,8 @@ Just you and your trusty, little server.
 
 ## Supported DNS providers
 
-- Hetzner
-
-.. that's it. Sorry.
+- Hetzner DNS Console (will be obsolete in may 2026)
+- Hetzner Cloud Console
 
 ## Setup
 
