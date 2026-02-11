@@ -1,7 +1,7 @@
 services:
   dyndns-bridge:
     container_name: 'dyndns-bridge'
-    image: 'ghcr.io/phkiener/dyndns-bridge:0.5.0'
+    image: 'ghcr.io/phkiener/dyndns-bridge:0.6.0'
     restart: unless-stopped
     network_mode: host
     volumes:
