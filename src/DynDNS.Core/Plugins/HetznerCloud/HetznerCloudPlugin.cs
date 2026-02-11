@@ -17,7 +17,7 @@ public sealed class HetznerCloudPlugin(IHttpClientFactory httpClientFactory, ILo
     public IProviderClient GetClient(IReadOnlyDictionary<string, string> parameters)
     {
         var httpClient = httpClientFactory.CreateClient(nameof(HetznerCloudClient));
-        httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {parameters["ApiKey"]}");
+        httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {parameters["API Key"]}");
 
         return new HetznerCloudClient(httpClient, logger);
     }

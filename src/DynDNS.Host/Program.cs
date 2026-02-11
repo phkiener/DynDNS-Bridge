@@ -1,5 +1,6 @@
 using DynDNS.Core;
 using DynDNS.Core.Plugins.Hetzner;
+using DynDNS.Core.Plugins.HetznerCloud;
 using DynDNS.Host;
 using DynDNS.Host.Jobs;
 using DynDNS.Web;
@@ -8,7 +9,10 @@ var builder = WebApplication.CreateBuilder();
 builder.Logging.AddSimpleConsole(static c => c.TimestampFormat = "[HH:mm:ss] ");
 builder.Services.AddWebServices();
 builder.Services.AddCoreServices();
+
 builder.Services.AddHetznerPlugin();
+builder.Services.AddHetznerCloudPlugin();
+
 builder.Services.AddHostedService<CurrentAddressHostedService>();
 builder.Configuration.When("DYNDNS_TRANSIENT", () => builder.Services.UseTransientCore(useScopes: false));
 builder.Configuration.When("DYNDNS_SCHEDULE", () => builder.Services.AddHostedService<ScheduledBindingUpdater>());

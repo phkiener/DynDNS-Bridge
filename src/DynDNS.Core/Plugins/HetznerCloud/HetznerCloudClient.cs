@@ -22,7 +22,7 @@ internal sealed class HetznerCloudClient(HttpClient client, ILogger logger) : IP
             await SendJsonAsync(HttpMethod.Post, $"zones/{hostname}/rrsets/{subdomain}/{type}/actions/add_records", request);
 
         }
-        else if (recordSet.Records is not [var singleRecord] || singleRecord != targetRecord)
+        else if (recordSet.ResourceRecordSet.Records is not [var singleRecord] || singleRecord != targetRecord)
         {
             logger.LogInformation("Updating {Type} record for {Subdomain}.{Hostname} to {Value}", type.ToString(), subdomain, hostname, ipAddress);
 
@@ -61,6 +61,8 @@ internal sealed class HetznerCloudClient(HttpClient client, ILogger logger) : IP
             return default;
         }
 
+        var returnedBody = await response.Content.ReadAsStringAsync();
+
         return await response.Content.ReadFromJsonAsync<TOut>();
     }
 
@@ -68,19 +70,24 @@ internal sealed class HetznerCloudClient(HttpClient client, ILogger logger) : IP
     {
         public sealed class AddRecordsRequest(IEnumerable<Record> records)
         {
-            [JsonRequired]
             [JsonPropertyName("records")]
             public Record[] Records { get; } = records.ToArray();
         }
 
         public sealed class SetRecordsRequest(IEnumerable<Record> records)
         {
-            [JsonRequired]
             [JsonPropertyName("records")]
             public Record[] Records { get; } = records.ToArray();
         }
 
         public sealed class GetResourceRecordSetResponse
+        {
+            [JsonRequired]
+            [JsonPropertyName("rrset")]
+            public required ResourceRecordSet ResourceRecordSet { get; init; }
+        }
+
+        public sealed class ResourceRecordSet
         {
             [JsonRequired]
             [JsonPropertyName("records")]
@@ -91,7 +98,7 @@ internal sealed class HetznerCloudClient(HttpClient client, ILogger logger) : IP
         {
             [JsonRequired]
             [JsonPropertyName("value")]
-            public required string Value { get; init; }
+            public required string Value { get; set; }
 
             [JsonPropertyName("comment")]
             public string? Comment { get; init; }
